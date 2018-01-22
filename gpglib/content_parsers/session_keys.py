@@ -20,7 +20,7 @@ class PubSessionKeyParser(Parser):
             typ = key_algorithm.__name__
             typ = typ[typ.rfind('.')+1:]
             raise errors.PGPException("Data was encrypted with %s key '%d', which was't found" % (typ, key_id))
-        
+
         # Use PKCS to consume the region and decrypt it
         algo, session_key, checksum = PKCS.consume(region, key_algorithm, key)
 

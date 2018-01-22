@@ -22,11 +22,11 @@ class PGPMessage(object):
 
     def reset(self):
         self.tags = ValueTracker()
-    
+
     ####################
     ### CONSUMING
     ####################
-    
+
     @property
     def packet_consumer(self):
         """Memoized PacketParser"""
@@ -34,7 +34,7 @@ class PGPMessage(object):
             from packet_parser import PacketParser
             self._packet_consumer = PacketParser()
         return self._packet_consumer
-    
+
     @property
     def subsignature_consumer(self):
         """Memoized SubSignatureParser"""
@@ -42,7 +42,7 @@ class PGPMessage(object):
             from packet_parser import SubSignatureParser
             self._subsignature_consumer = SubSignatureParser()
         return self._subsignature_consumer
-    
+
     def consume(self, region):
         """
             Consume a message.
@@ -52,7 +52,7 @@ class PGPMessage(object):
             region = bitstring.ConstBitStream(bytes=region)
 
         self.packet_consumer.consume(self, region)
-    
+
     def consume_subsignature(self, region):
         """
             Consume subsignature packets
@@ -62,15 +62,15 @@ class PGPMessage(object):
             region = bitstring.ConstBitStream(bytes=region)
 
         self.subsignature_consumer.consume(self, region)
-    
+
     ####################
     ### ADDING TAGS
     ####################
-    
+
     def start_tag(self, tag):
         """Record start of a new tag"""
         self.tags.start_item(tag)
-    
+
     def end_tag(self):
         """Record end of a new tag"""
         self.tags.end_item()
@@ -87,7 +87,7 @@ class EncryptedMessage(PGPMessage):
     def reset(self):
         super(EncryptedMessage, self).reset()
         self._plaintext = []
-    
+
     def decrypt(self, region):
         """
             Consume the provided data
@@ -138,7 +138,7 @@ class Key(PGPMessage):
                 return _passphrase
             self._passphrase = get_passphrase
         return self._passphrase
-    
+
     def parse(self, region):
         self.reset()
         self.consume(region)
@@ -153,16 +153,16 @@ class Key(PGPMessage):
             result[key['key_id']] = key['key']
             result.update(self.key_dict(subkeys))
         return result
-    
+
     ####################
     ### ADDING KEYS
     ####################
-    
+
     def add_key(self, info):
         """Start a new public key"""
         self.keys.end_item()
         self.keys.start_item(info)
-    
+
     def add_sub_key(self, info):
         """Add a sub public key"""
         self.keys.start_item(info)

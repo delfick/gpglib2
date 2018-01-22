@@ -25,7 +25,7 @@ class ContentParser(object):
     def find_parsers(self):
         """Specify lists of [(tag_type, kls), (tag_type, kls), ...] for kls to handle each tag type"""
         raise NotImplemented
-        
+
     def consume(self, tag, message, kwargs):
         """
             Find parser given tag.tag_type
@@ -34,7 +34,7 @@ class ContentParser(object):
         # Determine what parser to use for this packet
         # Default to self.parse_unknown, which will do some complaining for us
         parser = self.parsers.get(tag.tag_type, self.parse_unknown)
-        
+
         # Consume the desired region
         return parser.consume(tag, message, tag.body, **kwargs)
 

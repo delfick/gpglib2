@@ -18,14 +18,14 @@ class SignatureParser(Parser):
         # Get values
         version, signature_type, public_key_algorithm, hash_algorithm, hashed_subpacket_length = region.readlist("""
         uint:8,  uint:8,         uint:8,               uint:8,         uint:16""")
-        
+
         # Complain if any values haven't been implemented yet
         self.only_implemented(version, (4, ), "version four signature packets")
         self.only_implemented(signature_type, (0x13, 0x18), "UserId and Subkey binding signatures")
 
         # Get key algorithm
         algorithm = Mapped.algorithms.keys[public_key_algorithm]
-        
+
         # Get hasher
         hasher = Mapped.algorithms.hashes[hash_algorithm]
 
@@ -86,15 +86,15 @@ class KeyParser(Parser):
         raw_mpi_bytes = region.read('bytes:%d' % mpi_length)
 
         return mpi_values, raw_mpi_bytes
-    
+
     def consume_rest(self, tag, message, region, info):
         """Have common things to all keys in info"""
         pass
-    
+
     def add_value(self, message, info):
         """Used to add information for this key to the message"""
         raise NotImplementedError
-    
+
     def determine_key_id(self, info):
         """Calculate the key id"""
         fingerprint_data = ''.join(
@@ -116,7 +116,7 @@ class KeyParser(Parser):
 
         fingerprint = SHA.new(fingerprint_data).hexdigest().upper()[-16:]
         return int(fingerprint, 16)
-    
+
     def consume_common(self, tag, message, region):
         """Common to all key types"""
         # Version of the public key
@@ -131,7 +131,7 @@ class KeyParser(Parser):
 
         # Get Key algorithm
         key_algorithm = Mapped.algorithms.keys[key_algo]
-        
+
         return dict(tag=tag, key_version=public_key_version, ctime=ctime, algorithm=key_algorithm, key_algo=key_algo)
 
 ####################
@@ -208,7 +208,7 @@ class SecretKeyParser(PublicKeyParser):
                 raise errors.PGPException("Secret key hashes don't match. Check your passphrase")
 
         return mpis
-    
+
     def crypt_CFB(self, region, ciphermod, key, iv):
         """
             Shamelessly stolen from OpenPGP (with some modifications)
@@ -216,10 +216,10 @@ class SecretKeyParser(PublicKeyParser):
         """
         # Create the cipher
         cipher = ciphermod.new(key, ciphermod.MODE_ECB)
-        
+
         # Determine how many bytes to process at a time
         shift = ciphermod.block_size
-        
+
         # Create a bitstring list of ['bytes:8', 'bytes:8', 'bytes:3']
         # Such that the entire remaining region length gets consumed
         region_length = (region.len - region.pos) / 8
@@ -227,7 +227,7 @@ class SecretKeyParser(PublicKeyParser):
         leftover = region_length % shift
         if leftover:
             region_datas.append('bytes:%d' % (region_length % shift))
-        
+
         # Use the cipher to decrypt region
         blocks = []
         for inblock in region.readlist(region_datas):
@@ -241,7 +241,7 @@ class SecretKeyParser(PublicKeyParser):
 ####################
 ### SUB KEYS
 ####################
-    
+
 class PublicSubKeyParser(PublicKeyParser):
     """Same format as Public Key"""
     def add_value(self, message, info):

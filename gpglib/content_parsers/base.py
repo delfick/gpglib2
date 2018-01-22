@@ -40,10 +40,10 @@ class Parser(object):
 
         # The size of the key (in bytes)
         key_size = Mapped.ciphers.key_sizes[cipher]
-        
+
         # Initialize an infinite stream of salts + passphrases
         stream = itertools.cycle(list(salt + passphrase))
-        
+
         # Infinite for loop
         result = []
         for i in itertools.count():
