@@ -20,7 +20,7 @@ describe TestCase, "Consuming rsa keys":
         # Parent key
         self.assertIn(3166937994423974160, public_key.key_dict())
         # Sub-key
-        self.assertIn(11980534847294644458L, public_key.key_dict())
+        self.assertIn(11980534847294644458, public_key.key_dict())
 
     it "successfully calls a function to retrieve the passphrase":
         def passphrase_func(message, info):
