@@ -1,5 +1,6 @@
 from gpglib.content_parsers.crypt import Mapped, Mpi
 from gpglib.content_parsers.base import Parser
+from gpglib.utils import binary_type, PY3
 from gpglib import utils, errors
 
 from Crypto.Hash import SHA
@@ -7,6 +8,11 @@ from Crypto.Hash import SHA
 import itertools
 import bitstring
 import binascii
+
+if PY3:
+    empty_binary_string = binary_type("", "utf-8")
+else:
+    empty_binary_string = ""
 
 ####################
 ### SIGNATURE
@@ -97,19 +103,19 @@ class KeyParser(Parser):
 
     def determine_key_id(self, info):
         """Calculate the key id"""
-        fingerprint_data = ''.join(
-            [ chr(info['key_version'])
+        fingerprint_data = empty_binary_string.join(
+            [ chr(info['key_version']).encode()
             , bitstring.Bits(uint=info['ctime'], length=4*8).bytes
-            , chr(info['key_algo'])
+            , chr(info['key_algo']).encode()
             , info['raw_mpi_bytes']
             ]
         )
 
         fingerprint_length = len(fingerprint_data)
-        fingerprint_data = ''.join(
-            [ '\x99'
-            , chr((0xffff & fingerprint_length) >> 8)
-            , chr(0xff & fingerprint_length)
+        fingerprint_data = empty_binary_string.join(
+            [ b'\x99'
+            , chr((0xffff & fingerprint_length) >> 8).encode()
+            , chr(0xff & fingerprint_length).encode()
             , fingerprint_data
             ]
         )
@@ -143,7 +149,10 @@ class PublicKeyParser(KeyParser):
         message.add_key(info)
 
     def consume_rest(self, tag, message, region, info):
-        info['key'] = info['algorithm'].construct(list(long(i.read('uint')) for i in info['mpi_values']))
+        values = [i.read('uint') for i in info['mpi_values']]
+        if not utils.PY3:
+            values = [long(v) for v in values]
+        info['key'] = info['algorithm'].construct(values)
         info['key_id'] = self.determine_key_id(info)
 
 ####################
@@ -161,7 +170,10 @@ class SecretKeyParser(PublicKeyParser):
         mpi_tuple = info['mpi_values'] + mpi_values
 
         # Record key and key_id
-        info['key'] = info['algorithm'].construct(list(long(i.read('uint')) for i in mpi_tuple))
+        values = [i.read('uint') for i in mpi_tuple]
+        if not utils.PY3:
+            values = [long(v) for v in values]
+        info['key'] = info['algorithm'].construct(values)
         info['key_id'] = self.determine_key_id(info)
 
     def get_mpis(self, s2k_type, message, region, info):
@@ -187,7 +199,7 @@ class SecretKeyParser(PublicKeyParser):
             key_passphrase = self.parse_s2k(region, cipher, message.passphrase(message, info))
 
             # The IV is the next `block_size` bytes
-            iv = region.read(cipher.block_size*8).bytes
+            iv = region.read(cipher.block_size * 8).bytes
 
             # Use the hacky crypt_CFB func to decrypt the MPIs
             result = self.crypt_CFB(region, cipher, key_passphrase, iv)
@@ -196,7 +208,7 @@ class SecretKeyParser(PublicKeyParser):
             # The decrypted bytes are in the format of:
             #   MPIs || 20-octet SHA1 hash
             # Read in the MPIs portion of this
-            mpis = decrypted.read(decrypted.len-(8*20))
+            mpis = decrypted.read(decrypted.len - (8 * 20))
 
             # Hash the mpi bytes
             generated_hash = SHA.new(mpis.bytes).digest()
@@ -222,8 +234,8 @@ class SecretKeyParser(PublicKeyParser):
 
         # Create a bitstring list of ['bytes:8', 'bytes:8', 'bytes:3']
         # Such that the entire remaining region length gets consumed
-        region_length = (region.len - region.pos) / 8
-        region_datas = ['bytes:%d' % shift] * (region_length/shift)
+        region_length = (region.len - region.pos) // 8
+        region_datas = ['bytes:%d' % shift] * (region_length // shift)
         leftover = region_length % shift
         if leftover:
             region_datas.append('bytes:%d' % (region_length % shift))
@@ -232,11 +244,16 @@ class SecretKeyParser(PublicKeyParser):
         blocks = []
         for inblock in region.readlist(region_datas):
             mask = cipher.encrypt(iv)
-            chunk = ''.join(chr(ord(c) ^ ord(m)) for m, c in itertools.izip(mask, inblock))
             iv = inblock
+
+            if PY3:
+                chunk = b"".join([bytes(bytearray((c ^ m, ))) for m, c in zip(mask, inblock)])
+            else:
+                chunk = "".join([chr(ord(c) ^ ord(m)) for m, c in itertools.izip(mask, inblock)])
+
             blocks.append(chunk)
 
-        return ''.join(blocks)
+        return b"".join(blocks)
 
 ####################
 ### SUB KEYS

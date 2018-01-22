@@ -11,7 +11,7 @@ cached = {}
 
 def get_file(name):
     file_path = os.path.join(data_folder, name)
-    with open(file_path, 'r') as f:
+    with open(file_path, 'rb') as f:
         return f.read()
 
 def get_original(msg):
@@ -36,7 +36,7 @@ def get_secret_keys():
         for key_name in os.listdir(key_folder):
             location = os.path.join(key_folder, key_name)
             if os.path.isfile(location) and key_name.endswith("gpg") and 'secret' in key_name:
-                with open(location, 'r') as k:
+                with open(location, 'rb') as k:
                     key = Key(passphrase="blahandstuff").parse(k.read())
                     keys.update(key.key_dict())
         cached['keys'] = keys

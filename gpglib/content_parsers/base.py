@@ -1,4 +1,5 @@
 from gpglib.content_parsers.crypt import Mapped
+from gpglib.utils import binary_type, PY3
 
 import itertools
 
@@ -30,6 +31,11 @@ class Parser(object):
         s2k_specifier, s2k_hash_algo, salt,    raw_count = region.readlist("""
         uint:8,        uint:8,        bytes:8, uint:8""")
 
+        # Make sure passphrase is also a binary type
+        # Because we add it to the salt
+        if not isinstance(passphrase, binary_type):
+            passphrase = passphrase.encode()
+
         self.only_implemented(s2k_specifier, (3, ), "String to key type 3")
 
         # Get a hash object we can use
@@ -42,27 +48,33 @@ class Parser(object):
         key_size = Mapped.ciphers.key_sizes[cipher]
 
         # Initialize an infinite stream of salts + passphrases
-        stream = itertools.cycle(list(salt + passphrase))
+        combined = salt + passphrase
+        if PY3:
+            combined = [combined[i:i + 1] for i in range(len(combined))]
+        else:
+            combined = list(salt + passphrase)
+        stream = itertools.cycle(combined)
 
         # Infinite for loop
         result = []
         for i in itertools.count():
             # Initialize the message, which is at a minimum:
             #   some nulls || salt || passphrase
-            message = ('\x00' * i) + salt + passphrase
+            message = (b'\x00' * i) + salt + passphrase
 
             # Fill the rest of the message (up to `count`) with the string `salt + passphrase`
-            message += ''.join(itertools.islice(stream, count - len(message)))
+            nxt = list(itertools.islice(stream, count - len(message)))
+            message += b''.join(nxt)
 
             # Now hash the message
-            hash = hasher.new(message).digest()
+            hsh = hasher.new(message).digest()
 
             # Append the message to the result, until len(result) == count
-            size = min(len(hash), key_size - len(result))
-            result.extend(hash[0:size])
+            size = min(len(hsh), key_size - len(result))
+            result.append(hsh[0:size])
 
             # Break if the result is large enough
-            if len(result) >= key_size:
+            if len(b"".join(result)) >= key_size:
                 break
 
-        return ''.join(result)
+        return b"".join(result)

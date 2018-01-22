@@ -1,3 +1,14 @@
+import sys
+
+PY3 = sys.version_info[0] == 3
+
+if PY3:
+    string_types = (str, )
+    binary_type = bytes
+else:
+    string_types = (basestring, )
+    binary_type = str
+
 def dump(bytes):
     """Return a readable string for a string of bytes"""
     r = []

@@ -120,7 +120,7 @@ class PKCS(object):
         decrypted = None
 
         # First byte needs to be 02
-        if padded.read("bytes:1") == '\x02':
+        if padded.read("bytes:1") == b'\x02':
             # Find the next 00
             pos_before = padded.bytepos
             padded.find('0x00', bytealigned=True)
@@ -154,8 +154,8 @@ class Mpi(object):
         raw_mpi_length = region.read('uint:16')
 
         # Read in the MPI bytes and return the resulting bitstream
-        mpi_length = (raw_mpi_length + 7) / 8
-        return region.read(mpi_length*8)
+        mpi_length = (raw_mpi_length + 7) // 8
+        return region.read(mpi_length * 8)
 
     @classmethod
     def retrieve(cls, region, mpis):

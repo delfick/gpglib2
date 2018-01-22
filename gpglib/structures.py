@@ -1,4 +1,4 @@
-from gpglib.utils import ValueTracker
+from gpglib.utils import ValueTracker, string_types, binary_type, PY3
 
 from collections import namedtuple
 import bitstring
@@ -31,7 +31,7 @@ class PGPMessage(object):
     def packet_consumer(self):
         """Memoized PacketParser"""
         if not hasattr(self, '_packet_consumer'):
-            from packet_parser import PacketParser
+            from gpglib.packet_parser import PacketParser
             self._packet_consumer = PacketParser()
         return self._packet_consumer
 
@@ -39,7 +39,7 @@ class PGPMessage(object):
     def subsignature_consumer(self):
         """Memoized SubSignatureParser"""
         if not hasattr(self, '_subsignature_consumer'):
-            from packet_parser import SubSignatureParser
+            from gpglib.packet_parser import SubSignatureParser
             self._subsignature_consumer = SubSignatureParser()
         return self._subsignature_consumer
 
@@ -48,7 +48,11 @@ class PGPMessage(object):
             Consume a message.
             If a string is passed in as region, it is converted to a bitstream for you
         """
-        if isinstance(region, (str, unicode)):
+        if isinstance(region, string_types):
+            if PY3:
+                region = region.encode()
+            region = bitstring.ConstBitStream(bytes=region)
+        elif isinstance(region, binary_type):
             region = bitstring.ConstBitStream(bytes=region)
 
         self.packet_consumer.consume(self, region)
@@ -58,7 +62,11 @@ class PGPMessage(object):
             Consume subsignature packets
             If a string is passed in as region, it is converted to a bitstream for you
         """
-        if isinstance(region, (str, unicode)):
+        if isinstance(region, string_types):
+            if PY3:
+                region = region.encode()
+            region = bitstring.ConstBitStream(bytes=region)
+        elif isinstance(region, binary_type):
             region = bitstring.ConstBitStream(bytes=region)
 
         self.subsignature_consumer.consume(self, region)
@@ -106,7 +114,7 @@ class EncryptedMessage(PGPMessage):
             Concatenate all plaintext found in the message
             Requires decrypt to have already been called
         """
-        return ''.join(self._plaintext)
+        return b''.join(self._plaintext)
 
     def add_plaintext(self, plaintext):
         """

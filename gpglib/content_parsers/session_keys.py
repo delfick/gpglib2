@@ -1,5 +1,6 @@
 from gpglib.content_parsers.crypt import Mapped, PKCS
 from gpglib.content_parsers.base import Parser
+from gpglib.utils import PY3
 from gpglib import errors
 
 class PubSessionKeyParser(Parser):
@@ -27,7 +28,12 @@ class PubSessionKeyParser(Parser):
         # Generate a checksum from the session_key (section 5.1 in the RFC).
         # This involves summing up all the bytes of the session key
         # and `mod`ing it by 65536.
-        generated_checksum = sum(ord(i) for i in session_key) % 65536
+        if PY3:
+            session_key_lst = [session_key[i:i + 1] for i in range(len(session_key))]
+        else:
+            session_key_lst = session_key
+
+        generated_checksum = sum(ord(i) for i in session_key_lst) % 65536
 
         # Compare the checksums and throw an error if they don't match
         if checksum != generated_checksum:
