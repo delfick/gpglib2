@@ -12,6 +12,15 @@ setup(
       , 'bitstring'
       ]
 
+    , extras_require =
+      { "tests":
+        [ "noseOfYeti"
+        , "pinocchio"
+        , "fudge"
+        , "nose"
+        ]
+      }
+
     # metadata for upload to PyPI
     , author = "Hitwise"
     , author_email = "nobody@hitwise.com"

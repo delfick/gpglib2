@@ -62,7 +62,7 @@ Tests
 
 Install the pip requirements::
 
-    $ pip install -r requirements_test.txt
+    $ pip install -e ".[tests]"
 
 Install nosy if you want the ability to make tests autorun when you run the tests (https://bitbucket.org/delfick/nosy)
 
@@ -75,6 +75,9 @@ Or if you have nosy::
     $ nosy ./test.sh
 
 Currently not much is tested.
+
+Note that if you also do a ``pip install tox`` then you may run the tests with
+different python versions by running ``tox``
 
 Docs
 ====
