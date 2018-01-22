@@ -1,4 +1,4 @@
-from crypt import Mapped
+from gpglib.content_parsers.crypt import Mapped
 
 import itertools
 

@@ -1,9 +1,6 @@
-from Crypto.PublicKey import RSA
-import bitstring
-
-from content_parsers import PacketContentParser, SubSignatureContentParser
-from errors import PGPFormatException
-from structures import Tag
+from gpglib.content_parsers import PacketContentParser, SubSignatureContentParser
+from gpglib.errors import PGPFormatException
+from gpglib.structures import Tag
 
 ####################
 ### PARSER BASE

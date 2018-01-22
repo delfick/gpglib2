@@ -1,6 +1,6 @@
-from crypt import Mapped, PKCS
+from gpglib.content_parsers.crypt import Mapped, PKCS
+from gpglib.content_parsers.base import Parser
 from gpglib import errors
-from base import Parser
 
 class PubSessionKeyParser(Parser):
     """Parse public session key packet"""

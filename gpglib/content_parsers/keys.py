@@ -1,6 +1,6 @@
+from gpglib.content_parsers.crypt import Mapped, Mpi
+from gpglib.content_parsers.base import Parser
 from gpglib import utils, errors
-from crypt import Mapped, Mpi
-from base import Parser
 
 from Crypto.Hash import SHA
 

@@ -1,7 +1,7 @@
-from keys import SecretKeyParser, PublicKeyParser, SecretSubKeyParser, PublicSubKeyParser, SignatureParser
-from data import LiteralParser, CompressedParser, SymEncryptedParser, UserIdParser
-from session_keys import PubSessionKeyParser
-from base import Parser
+from gpglib.content_parsers.keys import SecretKeyParser, PublicKeyParser, SecretSubKeyParser, PublicSubKeyParser, SignatureParser
+from gpglib.content_parsers.data import LiteralParser, CompressedParser, SymEncryptedParser, UserIdParser
+from gpglib.content_parsers.session_keys import PubSessionKeyParser
+from gpglib.content_parsers.base import Parser
 
 ####################
 ### DELEGATORS

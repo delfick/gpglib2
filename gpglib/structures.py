@@ -1,7 +1,7 @@
+from gpglib.utils import ValueTracker
+
 from collections import namedtuple
 import bitstring
-
-from utils import ValueTracker
 
 # Information obtained from an OpenPGP header
 Tag = namedtuple('Tag', ('version', 'tag_type', 'body'))

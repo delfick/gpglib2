@@ -1,7 +1,8 @@
 # coding: spec
 
+from tests.helpers import data
+
 from gpglib.structures import Key
-from helpers import data
 
 from unittest import TestCase
 import nose

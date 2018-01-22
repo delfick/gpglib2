@@ -1,8 +1,8 @@
 # coding:spec
 
-from gpglib.structures import EncryptedMessage
+from tests.helpers import data
 
-from helpers import data
+from gpglib.structures import EncryptedMessage
 
 import itertools
 import unittest

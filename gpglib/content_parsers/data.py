@@ -1,5 +1,5 @@
-from crypt import Mapped
-from base import Parser
+from gpglib.content_parsers.crypt import Mapped
+from gpglib.content_parsers.base import Parser
 
 class CompressedParser(Parser):
     """Parse compressed packets"""
