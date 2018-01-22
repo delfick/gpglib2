@@ -1,2 +1,2 @@
 #!/bin/bash
-nosetests --with-noy --with-spec --spec-color
+nosetests --with-noy
