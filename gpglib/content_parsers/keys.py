@@ -9,11 +9,6 @@ import itertools
 import bitstring
 import binascii
 
-if PY3:
-    empty_binary_string = binary_type("", "utf-8")
-else:
-    empty_binary_string = ""
-
 ####################
 ### SIGNATURE
 ####################
@@ -103,7 +98,7 @@ class KeyParser(Parser):
 
     def determine_key_id(self, info):
         """Calculate the key id"""
-        fingerprint_data = empty_binary_string.join(
+        fingerprint_data = b"".join(
             [ chr(info['key_version']).encode()
             , bitstring.Bits(uint=info['ctime'], length=4*8).bytes
             , chr(info['key_algo']).encode()
@@ -112,7 +107,7 @@ class KeyParser(Parser):
         )
 
         fingerprint_length = len(fingerprint_data)
-        fingerprint_data = empty_binary_string.join(
+        fingerprint_data = b"".join(
             [ b'\x99'
             , chr((0xffff & fingerprint_length) >> 8).encode()
             , chr(0xff & fingerprint_length).encode()
