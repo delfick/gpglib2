@@ -66,7 +66,7 @@ class Compression(object):
             and that the data is compressed with up to 15 bits of compression.
         """
         return zlib.decompress(compressed, -15)
-    
+
     decompression = Mapping("Decompressor",
         { 1 : decompress_zip  # ZIP
         , 2 : zlib.decompress # ZLIB
@@ -78,7 +78,7 @@ class Mapped(object):
     ciphers = Ciphers
     algorithms = Algorithms
     compression = Compression
-    
+
 ####################
 ### PKCS
 ####################
@@ -152,7 +152,7 @@ class Mpi(object):
         """Retrieve one MPI value from the region"""
         # Get the length of the MPI to read in
         raw_mpi_length = region.read('uint:16')
-        
+
         # Read in the MPI bytes and return the resulting bitstream
         mpi_length = (raw_mpi_length + 7) / 8
         return region.read(mpi_length*8)
@@ -164,7 +164,7 @@ class Mpi(object):
             Allows some nice declarativity below....
         """
         return tuple(cls.parse(region) for mpi in mpis)
-    
+
     ####################
     ### RFC4880 5.1
     ####################
@@ -174,13 +174,13 @@ class Mpi(object):
         """Retrieve necessary MPI values from a public session key"""
         if algorithm is RSA:
             return cls.retrieve(region, ('m**e mod n', ))
-        
+
         elif algorithm is ElGamal:
             return cls.retrieve(region, ('g**k mod p', 'm * y**k mod p'))
-        
+
         else:
             raise errors.PGPException("Unknown mpi algorithm for encryption %d" % algorithm)
-    
+
     ####################
     ### RFC4880 5.5.2 and 5.5.3
     ####################
@@ -190,13 +190,13 @@ class Mpi(object):
         """Retrieve necessary MPI values from a public key for specified algorithm"""
         if algorithm is RSA:
             return cls.retrieve(region, ('n', 'e'))
-        
+
         elif algorithm is ElGamal:
             return cls.retrieve(region, ('p', 'g', 'y'))
-        
+
         elif algorithm is DSA:
             return cls.retrieve(region, ('p', 'q', 'g', 'y'))
-        
+
         else:
             raise errors.PGPException("Unknown mpi algorithm for public keys %d" % algorithm)
 
@@ -205,12 +205,12 @@ class Mpi(object):
         """Retrieve necessary MPI values from a secret key for specified algorithm"""
         if algorithm is RSA:
             return cls.retrieve(region, ('d', 'p', 'q', 'r'))
-        
+
         elif algorithm is ElGamal:
             return cls.retrieve(region, ('x', ))
-        
+
         elif algorithm is DSA:
             return cls.retrieve(region, ('x', ))
-        
+
         else:
             raise errors.PGPException("Unknown mpi algorithm for secret keys %d" % algorithm)
