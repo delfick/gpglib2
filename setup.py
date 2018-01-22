@@ -8,8 +8,8 @@ setup(
     , version = "0.1.1"
     , packages = packages
     , install_requires =
-      [ 'pycrypto'
-      , 'bitstring'
+      [ 'pycrypto==2.6.1'
+      , 'bitstring==3.1.5'
       ]
 
     , extras_require =
