@@ -124,6 +124,9 @@ class EncryptedMessage(PGPMessage):
         """
         self._plaintext.append(plaintext)
 
+    def add_mdc(self, mdc):
+        self.mdc = mdc
+
 ####################
 ### KEY
 ####################

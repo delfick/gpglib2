@@ -1,3 +1,4 @@
+from gpglib.content_parsers.data import SymmetricallyEncryptedIntegrityProtectedDataPacketParser, ModificationDetectionCodePacketParser
 from gpglib.content_parsers.keys import SecretKeyParser, PublicKeyParser, SecretSubKeyParser, PublicSubKeyParser, SignatureParser
 from gpglib.content_parsers.data import LiteralParser, CompressedParser, SymEncryptedParser, UserIdParser
 from gpglib.content_parsers.session_keys import PubSessionKeyParser
@@ -52,6 +53,8 @@ class PacketContentParser(ContentParser):
             , (11, LiteralParser)
             , (13, UserIdParser)
             , (14, PublicSubKeyParser)
+            , (18, SymmetricallyEncryptedIntegrityProtectedDataPacketParser)
+            , (19, ModificationDetectionCodePacketParser)
             )
 
 class SubSignatureContentParser(ContentParser):
