@@ -90,7 +90,7 @@ class PacketParser(Parser):
 
         # The left-most bit *MUST* be 1
         if not left_bit:
-            raise PGPFormatException("The left-most bit of the tag ('%x') was not 1" % tag.read('uint'))
+            raise PGPFormatException("The left-most bit of the tag ('%x') was not 1" % left_bit)
 
         # How the tag is parsed changes between the two versions
         if version == 1:
