@@ -22,7 +22,7 @@ class Parser(object):
     def name(self):
         return self.__class__.__name__
 
-    def parse_s2k(self, region, cipher=None, passphrase=None):
+    def parse_s2k(self, region, key_size, passphrase=None):
         """Get and use string to key specifier for region"""
         # string-to-key specifier'
         # Hash algorithm used by the string-to-key value
@@ -43,9 +43,6 @@ class Parser(object):
 
         # The 'count' is the length of the data that gets hashed
         count = (16 + (raw_count & 15)) << ((raw_count >> 4) + 6)
-
-        # The size of the key (in bytes)
-        key_size = Mapped.ciphers.key_sizes[cipher]
 
         # Initialize an infinite stream of salts + passphrases
         combined = salt + passphrase

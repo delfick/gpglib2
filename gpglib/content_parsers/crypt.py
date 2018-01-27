@@ -30,10 +30,12 @@ class Mapping(object):
 
 class Algorithms(object):
     encryption = Mapping("Symmetric encryption algorithm",
-        { 2 : DES3     # TripleDES 168 bit key derived from 192
-        , 3 : CAST     # CAST5 128-bit key
-        , 4 : Blowfish # Blowfish 128-bit key
-        , 7 : AES      # AES 128-bit key
+        { 2 : (DES3, 21)     # TripleDES 168 bit key derived from 192
+        , 3 : (CAST, 16)     # CAST5 128-bit key
+        , 4 : (Blowfish, 16) # Blowfish 128-bit key
+        , 7 : (AES, 16)      # AES 128-bit key
+        , 8 : (AES, 24)      # AES with 192-bit key
+        , 9 : (AES, 32)      # AES with 256-bit key
         }
     )
 
@@ -49,12 +51,6 @@ class Algorithms(object):
         , 3  : RSA     # Sign Only
         , 16 : ElGamal # Encrypt Only
         , 17 : DSA     # Digital Signature Algorithm
-        }
-    )
-
-class Ciphers(object):
-    key_sizes = Mapping("Cipher key size",
-        { CAST : 16 # CAST5
         }
     )
 
@@ -75,7 +71,6 @@ class Compression(object):
     )
 
 class Mapped(object):
-    ciphers = Ciphers
     algorithms = Algorithms
     compression = Compression
 

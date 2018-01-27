@@ -19,13 +19,10 @@ class SymEncryptedParser(Parser):
     """Parse symmetrically encrypted data packet"""
     def consume(self, tag, message, region, algo, session_key):
         # Get the encryption algorithm used
-        cipher = Mapped.algorithms.encryption[algo]
-
-        # Handy alias for the encryption algo's block size
-        block_size = cipher.block_size
+        cipher, _ = Mapped.algorithms.encryption[algo]
 
         # Find out the length of the IV
-        iv_len = block_size + 2
+        iv_len = cipher.block_size + 2
 
         # Read in the encrypted IV
         # The ciphertext is what's left in `region` after the iv

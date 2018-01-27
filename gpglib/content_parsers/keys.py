@@ -188,10 +188,10 @@ class SecretKeyParser(PublicKeyParser):
             encryption_algo = region.read(8).uint
 
             # Get a cipher object we can use to decrypt the key (and fail if we can't)
-            cipher = Mapped.algorithms.encryption[encryption_algo]
+            cipher, key_size = Mapped.algorithms.encryption[encryption_algo]
 
             # This is the passphrase used to decrypt the secret key
-            key_passphrase = self.parse_s2k(region, cipher, message.passphrase(message, info))
+            key_passphrase = self.parse_s2k(region, key_size, message.passphrase(message, info))
 
             # The IV is the next `block_size` bytes
             iv = region.read(cipher.block_size * 8).bytes
