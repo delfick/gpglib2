@@ -5,7 +5,7 @@ import itertools
 
 class Parser(object):
     """Base Parser class"""
-    def consume(self, tag, message, region):
+    def consume(self, tag, message, region, **kwargs):
         """To be implemented by subclasses to do something with the body of the parser"""
         raise NotImplementedError("Don't know about tag type %d" % tag.tag_type)
 
