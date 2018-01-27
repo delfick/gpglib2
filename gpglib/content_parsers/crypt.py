@@ -1,3 +1,4 @@
+from gpglib.utils import PY3
 from gpglib import errors
 
 from Crypto.Cipher import CAST, AES, Blowfish, DES3
@@ -6,8 +7,47 @@ from Crypto.Hash import SHA, SHA256
 from Crypto import Random
 
 import bitstring
+import itertools
 import zlib
 import bz2
+
+####################
+### CFB
+####################
+
+def crypt_CFB(region, ciphermod, key, iv):
+    """
+        Shamelessly stolen from OpenPGP (with some modifications)
+        http://pypi.python.org/pypi/OpenPGP
+    """
+    # Create the cipher
+    cipher = ciphermod.new(key, ciphermod.MODE_ECB)
+
+    # Determine how many bytes to process at a time
+    shift = ciphermod.block_size
+
+    # Create a bitstring list of ['bytes:8', 'bytes:8', 'bytes:3']
+    # Such that the entire remaining region length gets consumed
+    region_length = (region.len - region.pos) // 8
+    region_datas = ['bytes:%d' % shift] * (region_length // shift)
+    leftover = region_length % shift
+    if leftover:
+        region_datas.append('bytes:%d' % (region_length % shift))
+
+    # Use the cipher to decrypt region
+    blocks = []
+    for inblock in region.readlist(region_datas):
+        mask = cipher.encrypt(iv)
+        iv = inblock
+
+        if PY3:
+            chunk = b"".join([bytes(bytearray((c ^ m, ))) for m, c in zip(mask, inblock)])
+        else:
+            chunk = "".join([chr(ord(c) ^ ord(m)) for m, c in itertools.izip(mask, inblock)])
+
+        blocks.append(chunk)
+
+    return b"".join(blocks)
 
 ####################
 ### MAPPINGS

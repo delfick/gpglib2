@@ -1,13 +1,10 @@
-from gpglib.content_parsers.crypt import Mapped, Mpi
+from gpglib.content_parsers.crypt import Mapped, Mpi, crypt_CFB
 from gpglib.content_parsers.base import Parser
-from gpglib.utils import binary_type, PY3
 from gpglib import utils, errors
 
 from Crypto.Hash import SHA
 
-import itertools
 import bitstring
-import binascii
 
 ####################
 ### SIGNATURE
@@ -197,7 +194,7 @@ class SecretKeyParser(PublicKeyParser):
             iv = region.read(cipher.block_size * 8).bytes
 
             # Use the hacky crypt_CFB func to decrypt the MPIs
-            result = self.crypt_CFB(region, cipher, key_passphrase, iv)
+            result = crypt_CFB(region, cipher, key_passphrase, iv)
             decrypted = bitstring.ConstBitStream(bytes=result)
 
             # The decrypted bytes are in the format of:
@@ -215,40 +212,6 @@ class SecretKeyParser(PublicKeyParser):
                 raise errors.PGPException("Secret key hashes don't match. Check your passphrase")
 
         return mpis
-
-    def crypt_CFB(self, region, ciphermod, key, iv):
-        """
-            Shamelessly stolen from OpenPGP (with some modifications)
-            http://pypi.python.org/pypi/OpenPGP
-        """
-        # Create the cipher
-        cipher = ciphermod.new(key, ciphermod.MODE_ECB)
-
-        # Determine how many bytes to process at a time
-        shift = ciphermod.block_size
-
-        # Create a bitstring list of ['bytes:8', 'bytes:8', 'bytes:3']
-        # Such that the entire remaining region length gets consumed
-        region_length = (region.len - region.pos) // 8
-        region_datas = ['bytes:%d' % shift] * (region_length // shift)
-        leftover = region_length % shift
-        if leftover:
-            region_datas.append('bytes:%d' % (region_length % shift))
-
-        # Use the cipher to decrypt region
-        blocks = []
-        for inblock in region.readlist(region_datas):
-            mask = cipher.encrypt(iv)
-            iv = inblock
-
-            if PY3:
-                chunk = b"".join([bytes(bytearray((c ^ m, ))) for m, c in zip(mask, inblock)])
-            else:
-                chunk = "".join([chr(ord(c) ^ ord(m)) for m, c in itertools.izip(mask, inblock)])
-
-            blocks.append(chunk)
-
-        return b"".join(blocks)
 
 ####################
 ### SUB KEYS
