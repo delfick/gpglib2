@@ -1,8 +1,9 @@
 .. toctree::
    :hidden:
 
-   about
-   examples
-   dev/index
+   docs/about
+   docs/examples
 
-.. include:: ../README.rst
+.. _gpglib2:
+
+.. include:: ../../README.rst

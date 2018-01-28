@@ -5,6 +5,7 @@ build/
 dist/
 *.swp
 *~
-docs/_build
+docs/sphinx/_build
+docs/sphinx/venv
 tests/data/gpg/random_seed
 

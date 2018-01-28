@@ -1,7 +1,7 @@
 .. _about:
 
-Purpose
-=======
+About
+=====
 
 This library was made with a particular need in mind and hence does the bare minimum to achieve that:
 
@@ -11,11 +11,11 @@ This library was made with a particular need in mind and hence does the bare min
 It provides a simple interface to do this with (see :ref:`examples`) and done with a readable/understandable implementation.
 
 Some Background
-===============
+---------------
 
 This library was created out of frustration with how slow the python libraries for parsing PGP messages were. 
 
-As it turns out, all the other libraries (except one) do their work by shelling out to the ``gpg`` binary. Our requirements were to process a large number of small PGP messages and ideally without batching them. With the existing libraries we were only getting around 20 messages a second due to the overhead of shelling out to gpg.
+As it turns out, at the time, all the other libraries (except one) do their work by shelling out to the ``gpg`` binary. Our requirements were to process a large number of small PGP messages and ideally without batching them. With the existing libraries we were only getting around 20 messages a second due to the overhead of shelling out to gpg.
 
 The one library we found that didn't shell out was a magnificent thing called OpenPGP, which can be found over at http://pypi.python.org/pypi/OpenPGP. Unfortunately this library was last edited 7 years ago and is about as slow as shelling out.
 
@@ -24,9 +24,9 @@ We decided that we could do better and so started our own RFC4880 compliant PGP 
 Some initial tests show that gpglib can get around 300 messages a second (when pycrypto is compiled with fast math).
 
 References
-==========
+----------
 
-We mainly used the following references to make this parser:
+We mainly used the following references to make the original gpglib:
 
  * RFC4880 (http://tools.ietf.org/html/rfc4880)
  * OpenPGP (http://pypi.python.org/pypi/OpenPGP)
@@ -35,8 +35,12 @@ We mainly used the following references to make this parser:
  * C pgpdump (http://www.mew.org/~kazu/proj/pgpdump/en/)
  * libsimplepgp (https://github.com/mrmekon/libsimplepgp)
 
+The fork of gpglib used the following also as a reference
+
+  * python-pgp (https://github.com/mitchellrj/python-pgp)
+
 Libraries
-=========
+---------
 
 This library isn't possible without:
 
