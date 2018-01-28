@@ -91,15 +91,8 @@ different python versions by running ``tox``
 Docs
 ====
 
-Install the pip requirements::
+You can build the docs yourself by going into the docs directory and running
+``./build.sh`` and then run ``python3 -m http.server`` and navigate to
+``localhost:8000/sphinx/_build/html/``
 
-    $ pip install -r requirements_docs.txt
-
-And then go into the docs directory and run make::
-
-    $ cd docs
-    $ make html
-
-Open up docs/_build/html/index.html in your browser.
-
-Automatically generated documentation is available at: http://gpglib2.readthedocs.org/en/latest/
+Generated documentation is also available at: http://gpglib2.readthedocs.org/en/latest/
