@@ -1,12 +1,6 @@
-.. _examples:
+from gpglib.structures import EncryptedMessage, Key
 
-Example
-=======
-
-.. code-block:: python
-
-    from gpglib.structures import EncryptedMessage, Key
-
+if __name__ == '__main__':
     data = open('tests/data/keys/key.secret.rsa.gpg', 'rb').read()
     key = Key(passphrase='blahandstuff')
     key.parse(data)
