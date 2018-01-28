@@ -4,8 +4,8 @@ from setuptools import setup, find_packages
 packages = [pkg for pkg in find_packages() if not pkg.startswith('tests')]
 
 setup(
-      name = "gpglib"
-    , version = "0.1.1"
+      name = "gpglib2"
+    , version = "0.2"
     , packages = packages
     , install_requires =
       [ 'pycrypto==2.6.1'
@@ -22,9 +22,9 @@ setup(
       }
 
     # metadata for upload to PyPI
-    , author = "Hitwise"
-    , author_email = "nobody@hitwise.com"
-    , description = "Library for decrypting gpg that doesn't shell out to gpg"
+    , author = "Stephen Moore"
+    , author_email = "delfick755@gmail.com"
+    , description = "A python3 compatible fork of gpglib, a Library for decrypting gpg that doesn't shell out to gpg"
     , license = "LGPLv2"
     , keywords = "gpg decrypt"
     )
