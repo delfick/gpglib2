@@ -15,8 +15,6 @@ setup(
     , extras_require =
       { "tests":
         [ "noseOfYeti"
-        , "pinocchio"
-        , "fudge"
         , "nose"
         ]
       }
