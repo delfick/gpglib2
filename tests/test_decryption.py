@@ -38,7 +38,7 @@ def generate_funcs():
     """
     args = {}
 
-    mdc = (False, )
+    mdc = (True, False)
     msgs = ('small', 'big')
     keys = ('rsa', 'dsa')
     ciphers = ('cast5', 'aes', 'blowfish', '3des')

@@ -46,16 +46,13 @@ Then with that keyid export the secret and public keys for both the rsa and dsa 
 
 I then created dump.small and dump.big as random json structures (the big on is from http://json.org/example.html).
 
-Then used the following command to populate the tests/data/encrypted folder:
-    
-    $ gpg -o encrypted/<key>/<cipher>/<compression>/<msg>.gpg --cipher-algo <cipher> --compress-algo <compression> --yes --disable-mdc --homedir ./gpg -r <name for key> --encrypt dump.<msg>
+Then run ``./tests/data/generate_test_data.sh`` to generate messages in the
+``tests/encrypted`` folder. 
 
-Where:
-
- * <key> is rsa or dsa
- * <cipher> is cast5, aes, 3des or blowfish
- * <compression> is zip, zlib or bzip2
- * <msg> is small and big for the two examples I have
+Note that this is only necessary if you are editing ``generate_test_data.sh`` to
+accommodate different options. If you are doing this then you will also need
+to do the same to ``tests/test_decryption.py`` to take the different data into
+account.
 
 Tests
 =====
