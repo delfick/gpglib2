@@ -17,8 +17,9 @@ def get_file(name):
 def get_original(msg):
     return get_file("dump.%s" % msg)
 
-def get_encrypted(msg, key, cipher, compression):
-    fn = os.path.join("encrypted", key, cipher, compression, '%s.gpg' % msg)
+def get_encrypted(msg, do_mdc, key, cipher, compression):
+    mdc = "mdc" if do_mdc is True else "no_mdc"
+    fn = os.path.join("encrypted", mdc, key, cipher, compression, '%s.gpg' % msg)
     return get_file(fn)
 
 def get_pgp_key(namespace, algo):

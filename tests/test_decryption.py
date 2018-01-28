@@ -38,14 +38,15 @@ def generate_funcs():
     """
     args = {}
 
+    mdc = (False, )
     msgs = ('small', 'big')
     keys = ('rsa', 'dsa')
     ciphers = ('cast5', 'aes', 'blowfish', '3des')
     compression = ('zip', 'zlib', 'bzip2', 'none')
 
     # Create a test for each combination of variables
-    for key, cipher, compression, msg in itertools.product(keys, ciphers, compression, msgs):
-        tester = create_decryption_check(msg, msg=msg, key=key, cipher=cipher, compression=compression)
+    for do_mdc, key, cipher, compression, msg in itertools.product(mdc, keys, ciphers, compression, msgs):
+        tester = create_decryption_check(msg, msg=msg, do_mdc=do_mdc, key=key, cipher=cipher, compression=compression)
         args[tester.__name__] = tester
 
     return args
