@@ -73,15 +73,9 @@ Install the pip requirements::
 
     $ pip install -e ".[tests]"
 
-Install nosy if you want the ability to make tests autorun when you run the tests (https://bitbucket.org/delfick/nosy)
-
 And then run::
 
     $ ./test.sh
-
-Or if you have nosy::
-
-    $ nosy ./test.sh
 
 Currently not much is tested.
 
