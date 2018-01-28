@@ -1,22 +1,34 @@
-GPG Lib
+GPGLib2
 =======
 
-We couldn't find a library for decrypting gpg that didn't shell out to gpg.
+This is a Python3 compatible fork of the gpglib library with support for AES
+secret keys and the mdc packet types.
+
+History
+-------
+
+Back in 2012 we couldn't find a library for decrypting gpg that didn't shell out
+to gpg.
 
 And shelling out to gpg is slow when you do it for many small files.
 
-So, with the help of http://pypi.python.org/pypi/OpenPGP and PyCrypto we created this, which is more performant than shelling out....
+So, with the help of http://pypi.python.org/pypi/OpenPGP and PyCrypto we created
+this, which is more performant than shelling out.
+
+Then in 2017 a friend needed this library for a task, but the library wasn't
+compatible with python3. Unfortunately we couldn't get write access back to the
+original gpglib, so we have created a fork.
 
 Installing
 ==========
 
 To install, just use pip::
 
-    $ pip install gpglib
+    $ pip install gpglib2
 
-Or download from pypi: http://pypi.python.org/pypi/gpglib.
+Or download from pypi: http://pypi.python.org/pypi/gpglib2.
 
-Or clone the git repo: https://github.com/Hitwise/gpglib.
+Or clone the git repo: https://github.com/delfick/gpglib2.
 
 Making test data
 ================
@@ -90,4 +102,4 @@ And then go into the docs directory and run make::
 
 Open up docs/_build/html/index.html in your browser.
 
-Automatically generated documentation is available at: http://gpglib.readthedocs.org/en/latest/
+Automatically generated documentation is available at: http://gpglib2.readthedocs.org/en/latest/
