@@ -51,7 +51,7 @@ Then find the keyid::
         # sub   2048R/80C7020A 2012-06-15
     # Here, the key we want is "80C7020A"
     
-Then with that keyid export the secret and public keys for both the rsa and dsa keys:
+Then with that keyid export the secret and public keys for both the rsa and dsa keys::
 
     $ gpg --export 80C7020A > key.public.rsa.gpg
     $ gpg --export-secret-key 80C7020A > key.secret.rsa.gpg
