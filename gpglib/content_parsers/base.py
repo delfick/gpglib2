@@ -59,7 +59,7 @@ class Parser(object):
             # Initialize the message, which is at a minimum:
             #   some nulls || salt || passphrase
             # Fill the rest of the message (up to `count`) with the string `salt + passphrase`
-            repeat_count = math.ceil((count - i) / len(combined))
+            repeat_count = int(math.ceil((count - i) / float(len(combined))))
             message = (b'\x00' * i) + (salt + passphrase) * repeat_count
 
             # Now hash the message
