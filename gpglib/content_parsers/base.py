@@ -1,3 +1,5 @@
+import math
+
 from gpglib.content_parsers.crypt import Mapped
 from gpglib.utils import binary_type, PY3
 
@@ -50,28 +52,25 @@ class Parser(object):
             combined = [combined[i:i + 1] for i in range(len(combined))]
         else:
             combined = list(salt + passphrase)
-        stream = itertools.cycle(combined)
 
         # Infinite for loop
         result = []
         for i in itertools.count():
             # Initialize the message, which is at a minimum:
             #   some nulls || salt || passphrase
-            message = (b'\x00' * i) + salt + passphrase
-
             # Fill the rest of the message (up to `count`) with the string `salt + passphrase`
-            nxt = list(itertools.islice(stream, count - len(message)))
-            message += b''.join(nxt)
+            repeat_count = math.ceil((count - i) / len(combined))
+            message = (b'\x00' * i) + (salt + passphrase) * repeat_count
 
             # Now hash the message
-            hsh = hasher.new(message).digest()
+            hsh = hasher.new(message[:count]).digest()
 
             # Append the message to the result, until len(result) == count
             size = min(len(hsh), key_size - len(result))
             result.append(hsh[0:size])
 
             # Break if the result is large enough
-            if len(b"".join(result)) >= key_size:
+            if sum(len(m) for m in result) >= key_size:
                 break
 
-        return b"".join(result)
+        return b''.join(result)
