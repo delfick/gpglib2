@@ -5,7 +5,7 @@ packages = [pkg for pkg in find_packages() if not pkg.startswith('tests')]
 
 setup(
       name = "gpglib2"
-    , version = "0.2"
+    , version = "0.2.1"
     , packages = packages
     , install_requires =
       [ 'pycrypto==2.6.1'
