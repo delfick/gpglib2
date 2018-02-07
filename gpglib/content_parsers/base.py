@@ -1,7 +1,7 @@
 import math
 
 from gpglib.content_parsers.crypt import Mapped
-from gpglib.utils import binary_type, PY3
+from gpglib.utils import binary_type
 
 import itertools
 
@@ -46,12 +46,8 @@ class Parser(object):
         # The 'count' is the length of the data that gets hashed
         count = (16 + (raw_count & 15)) << ((raw_count >> 4) + 6)
 
-        # Initialize an infinite stream of salts + passphrases
+        # Combine the salt and passphrase for the repeating pattern
         combined = salt + passphrase
-        if PY3:
-            combined = [combined[i:i + 1] for i in range(len(combined))]
-        else:
-            combined = list(salt + passphrase)
 
         # Infinite for loop
         result = []
@@ -60,7 +56,7 @@ class Parser(object):
             #   some nulls || salt || passphrase
             # Fill the rest of the message (up to `count`) with the string `salt + passphrase`
             repeat_count = int(math.ceil((count - i) / float(len(combined))))
-            message = (b'\x00' * i) + (salt + passphrase) * repeat_count
+            message = (b'\x00' * i) + combined * repeat_count
 
             # Now hash the message
             hsh = hasher.new(message[:count]).digest()
