@@ -23,8 +23,8 @@ if __name__ == '__main__':
     parser = get_parser()
     args = parser.parse_args()
     loop_kwargs = dict(
-          key_location = "tests/data/key.secret.rsa.gpg"
-        , message_location = 'tests/data/data.small.dump.rsa.gpg'
+          key_location = "tests/data/keys/key.secret.rsa.gpg"
+        , message_location = 'tests/data/encrypted/mdc/rsa/aes/bzip2/big.gpg'
         , passphrase = 'password25'
         )
 
@@ -34,7 +34,7 @@ if __name__ == '__main__':
         start_loop(decrypt_action)
 
     if args.number_processes == 0:
-        print "Processed infinite messages in 0 seconds"
+        print("Processed infinite messages in 0 seconds")
 
     elif args.number_processes == 1:
         run(**loop_kwargs)
@@ -50,4 +50,4 @@ if __name__ == '__main__':
             for process in processes:
                 process.join()
         except KeyboardInterrupt:
-            print 'exiting'
+            print('exiting')
