@@ -1,6 +1,5 @@
 from gpglib.structures import Key
 
-from Crypto.PublicKey import RSA
 import os
 
 this_folder = os.path.dirname(__file__)

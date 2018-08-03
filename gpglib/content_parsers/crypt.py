@@ -172,7 +172,7 @@ class PKCS(object):
 
         if decrypted is None:
             # MPIs weren't valid, use random bytes intead
-            decrypted = bitstring.ConstBitStream(bytes=Random.new().read(19))
+            decrypted = bitstring.ConstBitStream(bytes=Random.get_random_bytes(19))
 
         return decrypted
 
@@ -230,7 +230,10 @@ class Mpi(object):
             return cls.retrieve(region, ('p', 'g', 'y'))
 
         elif algorithm is DSA:
-            return cls.retrieve(region, ('p', 'q', 'g', 'y'))
+            p, q, g, y = cls.retrieve(region, ('p', 'q', 'g', 'y'))
+
+            # Pycryptodome has a weird construct order
+            return y, g, p, q
 
         else:
             raise errors.PGPException("Unknown mpi algorithm for public keys %d" % algorithm)

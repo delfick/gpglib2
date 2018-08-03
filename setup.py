@@ -8,7 +8,7 @@ setup(
     , version = "0.2.1"
     , packages = packages
     , install_requires =
-      [ 'pycrypto==2.6.1'
+      [ 'pycryptodome==3.6.4'
       , 'bitstring==3.1.5'
       ]
 
