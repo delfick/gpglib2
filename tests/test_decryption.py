@@ -44,6 +44,9 @@ def generate_funcs():
     ciphers = ('cast5', 'aes', 'blowfish', '3des')
     compression = ('zip', 'zlib', 'bzip2', 'none')
 
+    # Make sure we can get secret keys
+    data.get_secret_keys()
+
     # Create a test for each combination of variables
     for do_mdc, key, cipher, compression, msg in itertools.product(mdc, keys, ciphers, compression, msgs):
         tester = create_decryption_check(msg, msg=msg, do_mdc=do_mdc, key=key, cipher=cipher, compression=compression)
