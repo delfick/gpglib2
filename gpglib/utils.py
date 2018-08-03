@@ -5,9 +5,15 @@ PY3 = sys.version_info[0] == 3
 if PY3:
     string_types = (str, )
     binary_type = bytes
+
+    def bytes_to_long(s):
+        return int.from_bytes(s, "big")
+
+    from Crypto.Util.number import long_to_bytes
 else:
     string_types = (basestring, )
     binary_type = str
+    from Crypto.Util.number import bytes_to_long, long_to_bytes
 
 def dump(bytes):
     """Return a readable string for a string of bytes"""

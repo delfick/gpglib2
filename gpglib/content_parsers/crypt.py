@@ -1,7 +1,7 @@
-from gpglib.utils import PY3
+from gpglib.utils import PY3, bytes_to_long, long_to_bytes
 from gpglib import errors
 
-from Crypto.Cipher import CAST, AES, Blowfish, DES3
+from Crypto.Cipher import CAST, AES, Blowfish, DES3, PKCS1_OAEP
 from Crypto.PublicKey import RSA, DSA, ElGamal
 from Crypto.Hash import SHA, SHA256
 from Crypto import Random
@@ -135,7 +135,12 @@ class PKCS(object):
         # Get the mpi values from the region according to key_algorithm
         # And decrypt them with the provided key
         mpis = tuple(mpi.bytes for mpi in Mpi.consume_encryption(region, key_algorithm))
-        padded = bitstring.ConstBitStream(bytes=key.decrypt(mpis))
+        if isinstance(key, RSA.RsaKey):
+            mpis = bytes_to_long(mpis[0])
+        else:
+            mpis = list(map(bytes_to_long, mpis))
+        bts = long_to_bytes(int(key._decrypt(mpis)))
+        padded = bitstring.ConstBitStream(bytes=bts)
 
         # Unpad the mpis
         decrypted = cls.unpad(padded)
