@@ -8,7 +8,7 @@ Example
     from gpglib.structures import EncryptedMessage, Key
 
     data = open('tests/data/keys/key.secret.rsa.gpg', 'rb').read()
-    key = Key(passphrase='blahandstuff')
+    key = Key(passphrase='password25')
     key.parse(data)
     keys = key.key_dict()
     print(keys)

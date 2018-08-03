@@ -37,24 +37,31 @@ This is what I did to get the data in tests/data.
 
 From within tests/data::
 
-    $ gpg --gen-key --homedir ./gpg
-    # Once with RSA encrypt and sign, username Stephen and password "blahandstuff"
-    # And again with DSA/Elgamal, username Bobby and password "blahandstuff"
+    $ gpg --full-gen-key --homedir ./gpg
+    # Once with RSA encrypt and sign, username Stephen and password "password25"
+    # And again with DSA/Elgamal, username Bobby and password "password25"
 
 Then find the keyid::
 
     $ gpg --homedir ./gpg --list-keys
-        #     ./gpg/pubring.gpg
-        # -----------------
-        # pub   2048R/1E42B68C 2012-06-15
-        # uid                  Stephen
-        # sub   2048R/80C7020A 2012-06-15
-    # Here, the key we want is "80C7020A"
-    
+      ------------------------------------------------------------------------
+      pub   rsa2048 2018-08-03 [SC]
+            F93E6E1B45D1C037B42650DE52320610E94B004B
+      uid           [ultimate] Stephen <stephen@stephen.com>
+      sub   rsa2048 2018-08-03 [E]
+
+      pub   dsa2048 2018-08-03 [SC]
+            A02F07AF335D3212FEB29C44FF5D18CBDBE4C62B
+      uid           [ultimate] Bobby <bobby@bobby.com>
+      sub   elg2048 2018-08-03 [E]
+
+    # Here, the key we want is "F93E6E1B45D1C037B42650DE52320610E94B004B"
+
 Then with that keyid export the secret and public keys for both the rsa and dsa keys::
 
-    $ gpg --export 80C7020A > key.public.rsa.gpg
-    $ gpg --export-secret-key 80C7020A > key.secret.rsa.gpg
+    $ export KEY=F93E6E1B45D1C037B42650DE52320610E94B004B
+    $ gpg --export $KEY > keys/key.public.rsa.gpg
+    $ gpg --export-secret-key $KEY > keys/key.secret.rsa.gpg
 
 I then created dump.small and dump.big as random json structures (the big on is from http://json.org/example.html).
 

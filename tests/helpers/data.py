@@ -38,7 +38,7 @@ def get_secret_keys():
             location = os.path.join(key_folder, key_name)
             if os.path.isfile(location) and key_name.endswith("gpg") and 'secret' in key_name:
                 with open(location, 'rb') as k:
-                    key = Key(passphrase="blahandstuff").parse(k.read())
+                    key = Key(passphrase="password25").parse(k.read())
                     keys.update(key.key_dict())
         cached['keys'] = keys
     return cached['keys']
