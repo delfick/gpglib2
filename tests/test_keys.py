@@ -35,17 +35,18 @@ describe TestCase, "Consuming rsa keys":
 describe TestCase, "Consuming dsa keys":
     it "successfully consumes a secret key":
         secret_key = Key(passphrase='password25').parse(data.get_pgp_key('secret', 'dsa'))
+        print(secret_key.key_dict().keys())
         # Parent key
-        self.assertIn(7405841044128673154, secret_key.key_dict())
+        self.assertIn(18400890916352345643, secret_key.key_dict())
         # Sub-key
-        self.assertIn(10470959134280958917, secret_key.key_dict())
+        self.assertIn(14839617247254692497, secret_key.key_dict())
 
     it "successfully consumes a public key":
         public_key = Key().parse(data.get_pgp_key('public', 'dsa'))
         # Parent key
-        self.assertIn(7405841044128673154, public_key.key_dict())
+        self.assertIn(18400890916352345643, public_key.key_dict())
         # Sub-key
-        self.assertIn(10470959134280958917, public_key.key_dict())
+        self.assertIn(14839617247254692497, public_key.key_dict())
 
     it "successfully calls a function to retrieve the passphrase":
         def passphrase_func(message, info):
@@ -53,6 +54,6 @@ describe TestCase, "Consuming dsa keys":
 
         secret_key = Key(passphrase=passphrase_func).parse(data.get_pgp_key('secret', 'dsa'))
         # Parent key
-        self.assertIn(7405841044128673154, secret_key.key_dict())
+        self.assertIn(18400890916352345643, secret_key.key_dict())
         # Sub-key
-        self.assertIn(10470959134280958917, secret_key.key_dict())
+        self.assertIn(14839617247254692497, secret_key.key_dict())
