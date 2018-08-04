@@ -44,5 +44,9 @@ Libraries
 
 This library isn't possible without:
 
- * Pycrypto (https://www.dlitz.net/software/pycrypto/)
+ * Pycryptodome (https://pycryptodome.readthedocs.io/en/latest/index.html)
  * Bitstring (http://packages.python.org/bitstring/)
+
+And earlier versions wasn't possible without:
+
+ * Pycrypto (https://www.dlitz.net/software/pycrypto/)

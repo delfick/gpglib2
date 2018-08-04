@@ -1,11 +1,12 @@
 from setuptools import setup, find_packages
+from gpglib import VERSION
 
 # All the packages except test
 packages = [pkg for pkg in find_packages() if not pkg.startswith('tests')]
 
 setup(
       name = "gpglib2"
-    , version = "0.2.1"
+    , version = VERSION
     , packages = packages
     , install_requires =
       [ 'pycryptodome==3.6.4'

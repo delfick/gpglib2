@@ -19,6 +19,12 @@ Then in 2017 a friend needed this library for a task, but the library wasn't
 compatible with python3. Unfortunately we couldn't get write access back to the
 original gpglib, so we have created a fork.
 
+ChangeLog
+---------
+
+0.3
+  * Migrated from pycrypto to pycryptodome
+
 Installing
 ==========
 
