@@ -1,7 +1,7 @@
 from gpglib.utils import PY3, bytes_to_long, long_to_bytes
 from gpglib import errors
 
-from Crypto.Cipher import CAST, AES, Blowfish, DES3, PKCS1_OAEP
+from Crypto.Cipher import CAST, AES, Blowfish, DES3, PKCS1_v1_5
 from Crypto.PublicKey import RSA, DSA, ElGamal
 from Crypto.Hash import SHA, SHA256
 from Crypto import Random
@@ -135,15 +135,17 @@ class PKCS(object):
         # Get the mpi values from the region according to key_algorithm
         # And decrypt them with the provided key
         mpis = tuple(mpi.bytes for mpi in Mpi.consume_encryption(region, key_algorithm))
-        if isinstance(key, RSA.RsaKey):
-            mpis = bytes_to_long(mpis[0])
-        else:
-            mpis = list(map(bytes_to_long, mpis))
-        bts = long_to_bytes(int(key._decrypt(mpis)))
-        padded = bitstring.ConstBitStream(bytes=bts)
 
-        # Unpad the mpis
-        decrypted = cls.unpad(padded)
+        if isinstance(key, RSA.RsaKey):
+            sentinel = Random.new().read(255)
+            val = mpis[0]
+            if len(val) < 256:
+                padding = b'\0' * (256 - len(val))
+                val = padding + val
+            bts = PKCS1_v1_5.new(key).decrypt(val, sentinel)
+            decrypted = bitstring.ConstBitStream(bytes=bts)
+        else:
+            decrypted = cls.decrypt_elgamal(key, mpis)
 
         # The size of the key is the amount in decrypted
         # Minus the algorithm at the front and the checksum at the end
@@ -155,8 +157,18 @@ class PKCS(object):
         return decrypted.readlist("uint:8, bytes:%d, uint:16""" % key_size)
 
     @classmethod
-    def unpad(cls, padded):
-        # If decrypted isn't set by the end it is replaced with random bytes
+    def decrypt_elgamal(cls, key, mpis):
+        """
+            Elgamal is actually deprecated and so there isn't and won't be a
+            public PKCS1_v1_5 type cypher for it
+
+            So this method uses the _decrypt method on the key and manually unpads the result
+        """
+        mpis = list(map(bytes_to_long, mpis))
+        bts = long_to_bytes(int(key._decrypt(mpis)))
+        padded = bitstring.ConstBitStream(bytes=bts)
+
+        # If decrypted isn't set by the end we raise an exception
         decrypted = None
 
         # First byte needs to be 02
@@ -176,8 +188,7 @@ class PKCS(object):
                 decrypted = padded
 
         if decrypted is None:
-            # MPIs weren't valid, use random bytes intead
-            decrypted = bitstring.ConstBitStream(bytes=Random.get_random_bytes(19))
+            raise errors.PGPException("Failed to parse session key")
 
         return decrypted
 
