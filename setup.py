@@ -24,6 +24,7 @@ setup(
     , author = "Stephen Moore"
     , author_email = "delfick755@gmail.com"
     , description = "A python3 compatible fork of gpglib, a Library for decrypting gpg that doesn't shell out to gpg"
+    , long_description = open("README.rst").read()
     , license = "LGPLv2"
     , keywords = "gpg decrypt"
     )

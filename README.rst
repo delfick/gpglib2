@@ -22,6 +22,10 @@ original gpglib, so we have created a fork.
 ChangeLog
 ---------
 
+0.3.1
+  * Update pycryptodome for CVE-2018-15560
+  * Remove use of a private method in pycryptodome when decrypting session keys
+
 0.3
   * Migrated from pycrypto to pycryptodome
 
