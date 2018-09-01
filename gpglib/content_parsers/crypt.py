@@ -188,7 +188,8 @@ class PKCS(object):
                 decrypted = padded
 
         if decrypted is None:
-            raise errors.PGPException("Failed to parse session key")
+            # MPIs weren't valid, use random bytes instead
+            decrypted = bitstring.ConstBitStream(bytes=Random.get_random_bytes(19))
 
         return decrypted
 
