@@ -9,7 +9,7 @@ setup(
     , version = VERSION
     , packages = packages
     , install_requires =
-      [ 'pycryptodome==3.6.4'
+      [ 'pycryptodome==3.6.6'
       , 'bitstring==3.1.5'
       ]
 
