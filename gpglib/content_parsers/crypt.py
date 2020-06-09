@@ -3,7 +3,7 @@ from gpglib import errors
 
 from Crypto.Cipher import CAST, AES, Blowfish, DES3, PKCS1_v1_5
 from Crypto.PublicKey import RSA, DSA, ElGamal
-from Crypto.Hash import SHA, SHA256
+from Crypto.Hash import SHA, SHA256, SHA512
 from Crypto import Random
 
 import bitstring
@@ -82,6 +82,7 @@ class Algorithms(object):
     hashes = Mapping("Hash Algorithm",
         { 2 : SHA    # SHA-1
         , 8 : SHA256 # SHA-256
+        , 10 : SHA512 # SHA-512
         }
     )
 
