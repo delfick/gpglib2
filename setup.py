@@ -1,6 +1,8 @@
 from setuptools import setup, find_packages
 from gpglib import VERSION
 
+# fmt: off
+
 # All the packages except test
 packages = [pkg for pkg in find_packages() if not pkg.startswith('tests')]
 
@@ -28,3 +30,5 @@ setup(
     , license = "LGPLv2"
     , keywords = "gpg decrypt"
     )
+
+# fmt: on
