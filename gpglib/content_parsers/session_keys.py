@@ -1,6 +1,5 @@
 from gpglib.content_parsers.crypt import Mapped, PKCS
 from gpglib.content_parsers.base import Parser
-from gpglib.utils import PY3
 from gpglib import errors
 
 
@@ -11,10 +10,8 @@ class PubSessionKeyParser(Parser):
         # Version of the packet we're parsing
         # The id of the key used to encrypt the session key
         # The public key algorithm used to encrypt the session key
-        # fmt: off
-        version, key_id,  key_algo = region.readlist("""
-        uint:8,  uint:64, uint:8""")
-        # fmt: on
+        vs = region.readlist("uint:8,  uint:64, uint:8")
+        version, key_id, key_algo = vs
 
         # Get key algorithm
         key_algorithm = Mapped.algorithms.keys[key_algo]
@@ -34,10 +31,7 @@ class PubSessionKeyParser(Parser):
         # Generate a checksum from the session_key (section 5.1 in the RFC).
         # This involves summing up all the bytes of the session key
         # and `mod`ing it by 65536.
-        if PY3:
-            session_key_lst = [session_key[i : i + 1] for i in range(len(session_key))]
-        else:
-            session_key_lst = session_key
+        session_key_lst = [session_key[i : i + 1] for i in range(len(session_key))]
 
         generated_checksum = sum(ord(i) for i in session_key_lst) % 65536
 

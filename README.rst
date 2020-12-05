@@ -22,6 +22,10 @@ original gpglib, so we have created a fork.
 ChangeLog
 ---------
 
+0.4
+  * gpglib2 now only supports python3.6 and above
+  * Formatting and linting with black and pylama
+
 0.3.1
   * Update pycryptodome for CVE-2018-15560
   * Remove use of a private method in pycryptodome when decrypting session keys

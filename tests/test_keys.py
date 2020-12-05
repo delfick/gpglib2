@@ -5,7 +5,7 @@ from tests.helpers import data
 from gpglib.structures import Key
 
 from unittest import TestCase
-import nose
+
 
 describe TestCase, "Consuming rsa keys":
     it "successfully consumes a secret key":

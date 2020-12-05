@@ -10,6 +10,9 @@ setup(
       name = "gpglib2"
     , version = VERSION
     , packages = packages
+
+    , python_requires = ">= 3.6"
+
     , install_requires =
       [ 'pycryptodome==3.6.6'
       , 'bitstring==3.1.5'

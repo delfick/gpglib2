@@ -1,4 +1,4 @@
-from gpglib.utils import PY3, bytes_to_long, long_to_bytes
+from gpglib.utils import bytes_to_long, long_to_bytes
 from gpglib import errors
 
 from Crypto.Cipher import CAST, AES, Blowfish, DES3, PKCS1_v1_5
@@ -7,7 +7,6 @@ from Crypto.Hash import SHA, SHA256
 from Crypto import Random
 
 import bitstring
-import itertools
 import zlib
 import bz2
 
@@ -40,12 +39,7 @@ def crypt_CFB(region, ciphermod, key, iv):
     for inblock in region.readlist(region_datas):
         mask = cipher.encrypt(iv)
         iv = inblock
-
-        if PY3:
-            chunk = b"".join([bytes(bytearray((c ^ m,))) for m, c in zip(mask, inblock)])
-        else:
-            chunk = "".join([chr(ord(c) ^ ord(m)) for m, c in itertools.izip(mask, inblock)])
-
+        chunk = b"".join([bytes(bytearray((c ^ m,))) for m, c in zip(mask, inblock)])
         blocks.append(chunk)
 
     return b"".join(blocks)
@@ -74,32 +68,30 @@ class Mapping(object):
 
 
 class Algorithms(object):
-    # fmt: off
-    encryption = Mapping("Symmetric encryption algorithm",
-        { 2 : (DES3, 21)     # TripleDES 168 bit key derived from 192
-        , 3 : (CAST, 16)     # CAST5 128-bit key
-        , 4 : (Blowfish, 16) # Blowfish 128-bit key
-        , 7 : (AES, 16)      # AES 128-bit key
-        , 8 : (AES, 24)      # AES with 192-bit key
-        , 9 : (AES, 32)      # AES with 256-bit key
-        }
+    encryption = Mapping(
+        "Symmetric encryption algorithm",
+        {
+            2: (DES3, 21),  # TripleDES 168 bit key derived from 192
+            3: (CAST, 16),  # CAST5 128-bit key
+            4: (Blowfish, 16),  # Blowfish 128-bit key
+            7: (AES, 16),  # AES 128-bit key
+            8: (AES, 24),  # AES with 192-bit key
+            9: (AES, 32),  # AES with 256-bit key
+        },
     )
 
-    hashes = Mapping("Hash Algorithm",
-        { 2 : SHA    # SHA-1
-        , 8 : SHA256 # SHA-256
-        }
-    )
+    hashes = Mapping("Hash Algorithm", {2: SHA, 8: SHA256})  # SHA-1  # SHA-256
 
-    keys = Mapping("Key algorithm",
-        { 1  : RSA     # Encrypt or Sign
-        , 2  : RSA     # Encrypt Only
-        , 3  : RSA     # Sign Only
-        , 16 : ElGamal # Encrypt Only
-        , 17 : DSA     # Digital Signature Algorithm
-        }
+    keys = Mapping(
+        "Key algorithm",
+        {
+            1: RSA,  # Encrypt or Sign
+            2: RSA,  # Encrypt Only
+            3: RSA,  # Sign Only
+            16: ElGamal,  # Encrypt Only
+            17: DSA,  # Digital Signature Algorithm
+        },
     )
-    # fmt: on
 
 
 class Compression(object):
@@ -111,14 +103,9 @@ class Compression(object):
         """
         return zlib.decompress(compressed, -15)
 
-    # fmt: off
-    decompression = Mapping("Decompressor",
-        { 1 : decompress_zip  # ZIP
-        , 2 : zlib.decompress # ZLIB
-        , 3 : bz2.decompress  # BZIP2
-        }
+    decompression = Mapping(
+        "Decompressor", {1: decompress_zip, 2: zlib.decompress, 3: bz2.decompress}
     )
-    # fmt: on
 
 
 class Mapped(object):
@@ -195,7 +182,7 @@ class PKCS(object):
             if pos_after - pos_before >= 8:
                 # Read in the seperator 0 byte
                 # Gauranteed to be zero given use of find above
-                sep = padded.read("bytes:1")
+                padded.read("bytes:1")
 
                 # Decrypted value is the rest of the padded value
                 decrypted = padded

@@ -1,9 +1,8 @@
-from gpglib.content_parsers.crypt import Mapped, crypt_CFB
+from gpglib.content_parsers.crypt import Mapped
 from gpglib.content_parsers.base import Parser
 from gpglib import errors
 
 from Crypto.Hash import SHA
-import bitstring
 
 
 class CompressedParser(Parser):

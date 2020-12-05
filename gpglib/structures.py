@@ -1,4 +1,4 @@
-from gpglib.utils import ValueTracker, string_types, binary_type, PY3
+from gpglib.utils import ValueTracker, string_types, binary_type
 
 from collections import namedtuple
 import bitstring
@@ -53,9 +53,7 @@ class PGPMessage(object):
         If a string is passed in as region, it is converted to a bitstream for you
         """
         if isinstance(region, string_types):
-            if PY3:
-                region = region.encode()
-            region = bitstring.ConstBitStream(bytes=region)
+            region = bitstring.ConstBitStream(bytes=region.encode())
         elif isinstance(region, binary_type):
             region = bitstring.ConstBitStream(bytes=region)
 
@@ -67,9 +65,7 @@ class PGPMessage(object):
         If a string is passed in as region, it is converted to a bitstream for you
         """
         if isinstance(region, string_types):
-            if PY3:
-                region = region.encode()
-            region = bitstring.ConstBitStream(bytes=region)
+            region = bitstring.ConstBitStream(bytes=region.encode())
         elif isinstance(region, binary_type):
             region = bitstring.ConstBitStream(bytes=region)
 

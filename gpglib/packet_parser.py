@@ -31,7 +31,7 @@ class Parser(object):
 
     def next_tag(self, region):
         """Called to get the next tag from the region"""
-        raise NotImplemented
+        raise NotImplementedError()
 
     def consume(self, message, region):
         """

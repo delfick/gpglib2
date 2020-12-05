@@ -1,19 +1,12 @@
-import sys
+from Crypto.Util.number import long_to_bytes
 
-PY3 = sys.version_info[0] == 3
+string_types = (str,)
+binary_type = bytes
+long_to_bytes = long_to_bytes
 
-if PY3:
-    string_types = (str,)
-    binary_type = bytes
 
-    def bytes_to_long(s):
-        return int.from_bytes(s, "big")
-
-    from Crypto.Util.number import long_to_bytes
-else:
-    string_types = (basestring,)
-    binary_type = str
-    from Crypto.Util.number import bytes_to_long, long_to_bytes
+def bytes_to_long(s):
+    return int.from_bytes(s, "big")
 
 
 def dump(bytes):

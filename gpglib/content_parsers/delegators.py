@@ -41,7 +41,7 @@ class ContentParser(object):
 
     def find_parsers(self):
         """Specify lists of [(tag_type, kls), (tag_type, kls), ...] for kls to handle each tag type"""
-        raise NotImplemented
+        raise NotImplementedError()
 
     def consume(self, tag, message, kwargs):
         """

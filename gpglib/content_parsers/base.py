@@ -35,10 +35,8 @@ class Parser(object):
         # Hash algorithm used by the string-to-key value
         # The salt value used for the hash
         # Count to determine how much data gets hashed
-        # fmt: off
-        s2k_specifier, s2k_hash_algo, salt,    raw_count = region.readlist("""
-        uint:8,        uint:8,        bytes:8, uint:8""")
-        # fmt: on
+        vs = region.readlist("uint:8,uint:8,bytes:8,uint:8")
+        s2k_specifier, s2k_hash_algo, salt, raw_count = vs
 
         # Make sure passphrase is also a binary type
         # Because we add it to the salt

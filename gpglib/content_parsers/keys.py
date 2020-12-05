@@ -1,6 +1,6 @@
 from gpglib.content_parsers.crypt import Mapped, Mpi, crypt_CFB
 from gpglib.content_parsers.base import Parser
-from gpglib import utils, errors
+from gpglib import errors
 
 from Crypto.Hash import SHA
 
@@ -16,37 +16,41 @@ class SignatureParser(Parser):
 
     def consume(self, tag, message, region):
         # Get values
-        # fmt: off
-        version, signature_type, public_key_algorithm, hash_algorithm, hashed_subpacket_length = region.readlist("""
-        uint:8,  uint:8,         uint:8,               uint:8,         uint:16""")
-        # fmt: on
+        vs = region.readlist("uint:8,uint:8,uint:8,uint:8,uint:16")
+        version, signature_type, public_key_algorithm, hash_algorithm, hashed_subpacket_length = vs
 
         # Complain if any values haven't been implemented yet
         self.only_implemented(version, (4,), "version four signature packets")
         self.only_implemented(signature_type, (0x13, 0x18), "UserId and Subkey binding signatures")
 
         # Get key algorithm
-        algorithm = Mapped.algorithms.keys[public_key_algorithm]
+        # algorithm = Mapped.algorithms.keys[public_key_algorithm]
 
         # Get hasher
-        hasher = Mapped.algorithms.hashes[hash_algorithm]
+        # hasher = Mapped.algorithms.hashes[hash_algorithm]
 
         # Determine hashed data
         subsignature = region.read(hashed_subpacket_length * 8)
-        hashed_subpacket_data = message.consume_subsignature(subsignature)
+
+        ## hashed_subpacket_data
+        message.consume_subsignature(subsignature)
 
         # Not cyrptographically protected by signature
         # Should only contain advisory information
         unhashed_subpacket_length = region.read("uint:16")
         unhashed_subpacket_body = region.read(unhashed_subpacket_length * 8)
-        unhashed_subpacket_data = message.consume_subsignature(unhashed_subpacket_body)
+
+        ## unhashed_subpacket_data
+        message.consume_subsignature(unhashed_subpacket_body)
 
         # Left 16 bits of the signed hash value provided for a heuristic test for valid signatures
-        left_of_signed_hash = region.read(8 * 2)
+        ## left_of_signed_hash
+        region.read(8 * 2)
 
         # Get the mpi value for the RSA hash
         # RSA signature value m**d mod n
-        mdn = Mpi.parse(region).read("uint")
+        ## mdn
+        Mpi.parse(region).read("uint")
 
 
 ####################
@@ -129,10 +133,8 @@ class KeyParser(Parser):
         # Version of the public key
         # Creation time of the secret key
         # Public key algorithm used by this key
-        # fmt: off
-        public_key_version, ctime,   key_algo = region.readlist("""
-        uint:8,             uint:32, uint:8""")
-        # fmt: on
+        vs = region.readlist("uint:8,uint:32,uint:8")
+        public_key_version, ctime, key_algo = vs
 
         # Only version 4 packets are supported
         if public_key_version != 4:
@@ -163,8 +165,6 @@ class PublicKeyParser(KeyParser):
 
     def consume_rest(self, tag, message, region, info):
         values = [i.read("uint") for i in info["mpi_values"]]
-        if not utils.PY3:
-            values = [long(v) for v in values]
         info["key"] = info["algorithm"].construct(values)
         info["key_id"] = self.determine_key_id(info)
 
@@ -186,8 +186,6 @@ class SecretKeyParser(PublicKeyParser):
 
         # Record key and key_id
         values = [i.read("uint") for i in mpi_tuple]
-        if not utils.PY3:
-            values = [long(v) for v in values]
         info["key"] = info["algorithm"].construct(values)
         info["key_id"] = self.determine_key_id(info)
 
