@@ -15,10 +15,11 @@ import bz2
 ### CFB
 ####################
 
+
 def crypt_CFB(region, ciphermod, key, iv):
     """
-        Shamelessly stolen from OpenPGP (with some modifications)
-        http://pypi.python.org/pypi/OpenPGP
+    Shamelessly stolen from OpenPGP (with some modifications)
+    http://pypi.python.org/pypi/OpenPGP
     """
     # Create the cipher
     cipher = ciphermod.new(key, ciphermod.MODE_ECB)
@@ -29,10 +30,10 @@ def crypt_CFB(region, ciphermod, key, iv):
     # Create a bitstring list of ['bytes:8', 'bytes:8', 'bytes:3']
     # Such that the entire remaining region length gets consumed
     region_length = (region.len - region.pos) // 8
-    region_datas = ['bytes:%d' % shift] * (region_length // shift)
+    region_datas = ["bytes:%d" % shift] * (region_length // shift)
     leftover = region_length % shift
     if leftover:
-        region_datas.append('bytes:%d' % (region_length % shift))
+        region_datas.append("bytes:%d" % (region_length % shift))
 
     # Use the cipher to decrypt region
     blocks = []
@@ -41,7 +42,7 @@ def crypt_CFB(region, ciphermod, key, iv):
         iv = inblock
 
         if PY3:
-            chunk = b"".join([bytes(bytearray((c ^ m, ))) for m, c in zip(mask, inblock)])
+            chunk = b"".join([bytes(bytearray((c ^ m,))) for m, c in zip(mask, inblock)])
         else:
             chunk = "".join([chr(ord(c) ^ ord(m)) for m, c in itertools.izip(mask, inblock)])
 
@@ -49,15 +50,18 @@ def crypt_CFB(region, ciphermod, key, iv):
 
     return b"".join(blocks)
 
+
 ####################
 ### MAPPINGS
 ####################
 
+
 class Mapping(object):
     """
-        Thin class that gives item access to some map of values
-        That raises a NotImplementedError if you try to access something not defined on it
+    Thin class that gives item access to some map of values
+    That raises a NotImplementedError if you try to access something not defined on it
     """
+
     def __init__(self, typ, map):
         self.map = map
         self.type = typ
@@ -68,7 +72,9 @@ class Mapping(object):
             raise NotImplementedError("Haven't implemented %s : %s" % (self.type, key))
         return self.map[key]
 
+
 class Algorithms(object):
+    # fmt: off
     encryption = Mapping("Symmetric encryption algorithm",
         { 2 : (DES3, 21)     # TripleDES 168 bit key derived from 192
         , 3 : (CAST, 16)     # CAST5 128-bit key
@@ -93,44 +99,51 @@ class Algorithms(object):
         , 17 : DSA     # Digital Signature Algorithm
         }
     )
+    # fmt: on
+
 
 class Compression(object):
     def decompress_zip(compressed):
         """
-            To decompress zip, we use zlib with a -15 window size.
-            It says to ignore the zlib header
-            and that the data is compressed with up to 15 bits of compression.
+        To decompress zip, we use zlib with a -15 window size.
+        It says to ignore the zlib header
+        and that the data is compressed with up to 15 bits of compression.
         """
         return zlib.decompress(compressed, -15)
 
+    # fmt: off
     decompression = Mapping("Decompressor",
         { 1 : decompress_zip  # ZIP
         , 2 : zlib.decompress # ZLIB
         , 3 : bz2.decompress  # BZIP2
         }
     )
+    # fmt: on
+
 
 class Mapped(object):
     algorithms = Algorithms
     compression = Compression
 
+
 ####################
 ### PKCS
 ####################
+
 
 class PKCS(object):
     @classmethod
     def consume(cls, region, key_algorithm, key):
         """
-            Get next mpi values from region as according to key_algorithm
-            Decrypt those mpis and then parse them as
-            0x2 | random bytes | 0x0 | result
+        Get next mpi values from region as according to key_algorithm
+        Decrypt those mpis and then parse them as
+        0x2 | random bytes | 0x0 | result
 
-            The result will then be
-            algorithm | session_key | checksum
+        The result will then be
+        algorithm | session_key | checksum
 
-            These values are retrieved from result and returned.
-            If, however, mpis don't follow pattern above, then random bytes are used instead
+        These values are retrieved from result and returned.
+        If, however, mpis don't follow pattern above, then random bytes are used instead
         """
         # Get the mpi values from the region according to key_algorithm
         # And decrypt them with the provided key
@@ -140,7 +153,7 @@ class PKCS(object):
             sentinel = Random.new().read(255)
             val = mpis[0]
             if len(val) < 256:
-                padding = b'\0' * (256 - len(val))
+                padding = b"\0" * (256 - len(val))
                 val = padding + val
             bts = PKCS1_v1_5.new(key).decrypt(val, sentinel)
             decrypted = bitstring.ConstBitStream(bytes=bts)
@@ -154,15 +167,15 @@ class PKCS(object):
         # The algorithm used to encrypt the message is the first byte
         # The session key is the next <key_size> bytes
         # The checksum is the last two bytes
-        return decrypted.readlist("uint:8, bytes:%d, uint:16""" % key_size)
+        return decrypted.readlist("uint:8, bytes:%d, uint:16" "" % key_size)
 
     @classmethod
     def decrypt_elgamal(cls, key, mpis):
         """
-            Elgamal is actually deprecated and so there isn't and won't be a
-            public PKCS1_v1_5 type cypher for it
+        Elgamal is actually deprecated and so there isn't and won't be a
+        public PKCS1_v1_5 type cypher for it
 
-            So this method uses the _decrypt method on the key and manually unpads the result
+        So this method uses the _decrypt method on the key and manually unpads the result
         """
         mpis = list(map(bytes_to_long, mpis))
         bts = long_to_bytes(int(key._decrypt(mpis)))
@@ -172,10 +185,10 @@ class PKCS(object):
         decrypted = None
 
         # First byte needs to be 02
-        if padded.read("bytes:1") == b'\x02':
+        if padded.read("bytes:1") == b"\x02":
             # Find the next 00
             pos_before = padded.bytepos
-            padded.find('0x00', bytealigned=True)
+            padded.find("0x00", bytealigned=True)
             pos_after = padded.bytepos
 
             # The ps section needs to be greater than 8
@@ -193,17 +206,20 @@ class PKCS(object):
 
         return decrypted
 
+
 ####################
 ### MPI VALUES
 ####################
 
+
 class Mpi(object):
     """Object to hold logic for getting multi precision integers from a region"""
+
     @classmethod
     def parse(cls, region):
         """Retrieve one MPI value from the region"""
         # Get the length of the MPI to read in
-        raw_mpi_length = region.read('uint:16')
+        raw_mpi_length = region.read("uint:16")
 
         # Read in the MPI bytes and return the resulting bitstream
         mpi_length = (raw_mpi_length + 7) // 8
@@ -212,8 +228,8 @@ class Mpi(object):
     @classmethod
     def retrieve(cls, region, mpis):
         """
-            Helper to get multiple mpis from a region
-            Allows some nice declarativity below....
+        Helper to get multiple mpis from a region
+        Allows some nice declarativity below....
         """
         return tuple(cls.parse(region) for mpi in mpis)
 
@@ -225,10 +241,10 @@ class Mpi(object):
     def consume_encryption(cls, region, algorithm):
         """Retrieve necessary MPI values from a public session key"""
         if algorithm is RSA:
-            return cls.retrieve(region, ('m**e mod n', ))
+            return cls.retrieve(region, ("m**e mod n",))
 
         elif algorithm is ElGamal:
-            return cls.retrieve(region, ('g**k mod p', 'm * y**k mod p'))
+            return cls.retrieve(region, ("g**k mod p", "m * y**k mod p"))
 
         else:
             raise errors.PGPException("Unknown mpi algorithm for encryption %d" % algorithm)
@@ -241,13 +257,13 @@ class Mpi(object):
     def consume_public(cls, region, algorithm):
         """Retrieve necessary MPI values from a public key for specified algorithm"""
         if algorithm is RSA:
-            return cls.retrieve(region, ('n', 'e'))
+            return cls.retrieve(region, ("n", "e"))
 
         elif algorithm is ElGamal:
-            return cls.retrieve(region, ('p', 'g', 'y'))
+            return cls.retrieve(region, ("p", "g", "y"))
 
         elif algorithm is DSA:
-            p, q, g, y = cls.retrieve(region, ('p', 'q', 'g', 'y'))
+            p, q, g, y = cls.retrieve(region, ("p", "q", "g", "y"))
 
             # Pycryptodome has a weird construct order
             return y, g, p, q
@@ -259,13 +275,13 @@ class Mpi(object):
     def consume_private(cls, region, algorithm):
         """Retrieve necessary MPI values from a secret key for specified algorithm"""
         if algorithm is RSA:
-            return cls.retrieve(region, ('d', 'p', 'q', 'r'))
+            return cls.retrieve(region, ("d", "p", "q", "r"))
 
         elif algorithm is ElGamal:
-            return cls.retrieve(region, ('x', ))
+            return cls.retrieve(region, ("x",))
 
         elif algorithm is DSA:
-            return cls.retrieve(region, ('x', ))
+            return cls.retrieve(region, ("x",))
 
         else:
             raise errors.PGPException("Unknown mpi algorithm for secret keys %d" % algorithm)

@@ -10,15 +10,19 @@ import bitstring
 ### SIGNATURE
 ####################
 
+
 class SignatureParser(Parser):
     """Signature packets describes a binding between some public key and some data"""
+
     def consume(self, tag, message, region):
         # Get values
+        # fmt: off
         version, signature_type, public_key_algorithm, hash_algorithm, hashed_subpacket_length = region.readlist("""
         uint:8,  uint:8,         uint:8,               uint:8,         uint:16""")
+        # fmt: on
 
         # Complain if any values haven't been implemented yet
-        self.only_implemented(version, (4, ), "version four signature packets")
+        self.only_implemented(version, (4,), "version four signature packets")
         self.only_implemented(signature_type, (0x13, 0x18), "UserId and Subkey binding signatures")
 
         # Get key algorithm
@@ -33,35 +37,38 @@ class SignatureParser(Parser):
 
         # Not cyrptographically protected by signature
         # Should only contain advisory information
-        unhashed_subpacket_length = region.read('uint:16')
+        unhashed_subpacket_length = region.read("uint:16")
         unhashed_subpacket_body = region.read(unhashed_subpacket_length * 8)
         unhashed_subpacket_data = message.consume_subsignature(unhashed_subpacket_body)
 
         # Left 16 bits of the signed hash value provided for a heuristic test for valid signatures
-        left_of_signed_hash = region.read(8*2)
+        left_of_signed_hash = region.read(8 * 2)
 
         # Get the mpi value for the RSA hash
         # RSA signature value m**d mod n
-        mdn = Mpi.parse(region).read('uint')
+        mdn = Mpi.parse(region).read("uint")
+
 
 ####################
 ### BASE KEY PARSER
 ####################
 
+
 class KeyParser(Parser):
     """
-        Public and Secret keys are the same except Secret keys has some extra information
-        SubKeys have the same format
-        Hence the base takes care of all the common things to both formats and delegates the rest to the subclass
+    Public and Secret keys are the same except Secret keys has some extra information
+    SubKeys have the same format
+    Hence the base takes care of all the common things to both formats and delegates the rest to the subclass
     """
+
     def consume(self, tag, message, region):
         info = self.consume_common(tag, message, region)
 
         # Get individual mpi_values and the raw bytes from the region for those values
         # The raw stream is required for the fingerprint data when determining key id
-        mpi_values, raw_mpi_bytes = self.get_mpi_values(region, info['algorithm'])
-        info['mpi_values'] = mpi_values
-        info['raw_mpi_bytes'] = raw_mpi_bytes
+        mpi_values, raw_mpi_bytes = self.get_mpi_values(region, info["algorithm"])
+        info["mpi_values"] = mpi_values
+        info["raw_mpi_bytes"] = raw_mpi_bytes
 
         # Consume the rest of the Key
         self.consume_rest(tag, message, region, info)
@@ -69,11 +76,11 @@ class KeyParser(Parser):
 
     def get_mpi_values(self, region, algorithm):
         """
-            * Determine position before
-            * Get individual mpi values
-            * Determine how much was read
-            * Reset region to what it was before
-            * Return byte stream for the amount read in the first pass
+        * Determine position before
+        * Get individual mpi values
+        * Determine how much was read
+        * Reset region to what it was before
+        * Return byte stream for the amount read in the first pass
         """
         pos_before = region.pos
         mpi_values = Mpi.consume_public(region, algorithm)
@@ -81,7 +88,7 @@ class KeyParser(Parser):
         pos_after = region.pos
         region.pos = pos_before
         mpi_length = (pos_after - pos_before) / 8
-        raw_mpi_bytes = region.read('bytes:%d' % mpi_length)
+        raw_mpi_bytes = region.read("bytes:%d" % mpi_length)
 
         return mpi_values, raw_mpi_bytes
 
@@ -96,19 +103,21 @@ class KeyParser(Parser):
     def determine_key_id(self, info):
         """Calculate the key id"""
         fingerprint_data = b"".join(
-            [ chr(info['key_version']).encode()
-            , bitstring.Bits(uint=info['ctime'], length=4*8).bytes
-            , chr(info['key_algo']).encode()
-            , info['raw_mpi_bytes']
+            [
+                chr(info["key_version"]).encode(),
+                bitstring.Bits(uint=info["ctime"], length=4 * 8).bytes,
+                chr(info["key_algo"]).encode(),
+                info["raw_mpi_bytes"],
             ]
         )
 
         fingerprint_length = len(fingerprint_data)
         fingerprint_data = b"".join(
-            [ b'\x99'
-            , chr((0xffff & fingerprint_length) >> 8).encode()
-            , chr(0xff & fingerprint_length).encode()
-            , fingerprint_data
+            [
+                b"\x99",
+                chr((0xFFFF & fingerprint_length) >> 8).encode(),
+                chr(0xFF & fingerprint_length).encode(),
+                fingerprint_data,
             ]
         )
 
@@ -120,53 +129,67 @@ class KeyParser(Parser):
         # Version of the public key
         # Creation time of the secret key
         # Public key algorithm used by this key
+        # fmt: off
         public_key_version, ctime,   key_algo = region.readlist("""
         uint:8,             uint:32, uint:8""")
+        # fmt: on
 
         # Only version 4 packets are supported
         if public_key_version != 4:
-            raise NotImplementedError("Public key versions != 4 are not supported. Upgrade your PGP!")
+            raise NotImplementedError(
+                "Public key versions != 4 are not supported. Upgrade your PGP!"
+            )
 
         # Get Key algorithm
         key_algorithm = Mapped.algorithms.keys[key_algo]
 
-        return dict(tag=tag, key_version=public_key_version, ctime=ctime, algorithm=key_algorithm, key_algo=key_algo)
+        return dict(
+            tag=tag,
+            key_version=public_key_version,
+            ctime=ctime,
+            algorithm=key_algorithm,
+            key_algo=key_algo,
+        )
+
 
 ####################
 ### PUBLIC KEY
 ####################
+
 
 class PublicKeyParser(KeyParser):
     def add_value(self, message, info):
         message.add_key(info)
 
     def consume_rest(self, tag, message, region, info):
-        values = [i.read('uint') for i in info['mpi_values']]
+        values = [i.read("uint") for i in info["mpi_values"]]
         if not utils.PY3:
             values = [long(v) for v in values]
-        info['key'] = info['algorithm'].construct(values)
-        info['key_id'] = self.determine_key_id(info)
+        info["key"] = info["algorithm"].construct(values)
+        info["key_id"] = self.determine_key_id(info)
+
 
 ####################
 ### SECRET KEY
 ####################
 
+
 class SecretKeyParser(PublicKeyParser):
     def consume_rest(self, tag, message, region, info):
         """Already have public key things"""
-        s2k_type = region.read('uint:8')
+        s2k_type = region.read("uint:8")
         mpis = self.get_mpis(s2k_type, message, region, info)
 
         # Get the rest of the mpi values and combine with those from public portion
-        mpi_values = Mpi.consume_private(mpis, info['algorithm'])
-        mpi_tuple = info['mpi_values'] + mpi_values
+        mpi_values = Mpi.consume_private(mpis, info["algorithm"])
+        mpi_tuple = info["mpi_values"] + mpi_values
 
         # Record key and key_id
-        values = [i.read('uint') for i in mpi_tuple]
+        values = [i.read("uint") for i in mpi_tuple]
         if not utils.PY3:
             values = [long(v) for v in values]
-        info['key'] = info['algorithm'].construct(values)
-        info['key_id'] = self.determine_key_id(info)
+        info["key"] = info["algorithm"].construct(values)
+        info["key_id"] = self.determine_key_id(info)
 
     def get_mpis(self, s2k_type, message, region, info):
         """Get mpi values from region given specified string to key type"""
@@ -213,16 +236,21 @@ class SecretKeyParser(PublicKeyParser):
 
         return mpis
 
+
 ####################
 ### SUB KEYS
 ####################
 
+
 class PublicSubKeyParser(PublicKeyParser):
     """Same format as Public Key"""
+
     def add_value(self, message, info):
         message.add_sub_key(info)
 
+
 class SecretSubKeyParser(SecretKeyParser):
     """Same format as Secret Key"""
+
     def add_value(self, message, info):
         message.add_sub_key(info)

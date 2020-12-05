@@ -8,29 +8,33 @@ from base import get_decryptor_and_message, start_loop
 import multiprocessing
 import argparse
 
+
 def get_parser():
-    parser = argparse.ArgumentParser(description='Naive Benchmark')
-    parser.add_argument("-n", "--number-processes"
-        , type = int
-        , help = "The number of processes to be decrypting with"
-        , default = 1
-        , required = False
-        )
+    parser = argparse.ArgumentParser(description="Naive Benchmark")
+    parser.add_argument(
+        "-n",
+        "--number-processes",
+        type=int,
+        help="The number of processes to be decrypting with",
+        default=1,
+        required=False,
+    )
 
     return parser
 
-if __name__ == '__main__':
+
+if __name__ == "__main__":
     parser = get_parser()
     args = parser.parse_args()
     loop_kwargs = dict(
-          key_location = "tests/data/keys/key.secret.rsa.gpg"
-        , message_location = 'tests/data/encrypted/mdc/rsa/aes/bzip2/big.gpg'
-        , passphrase = 'password25'
-        )
+        key_location="tests/data/keys/key.secret.rsa.gpg",
+        message_location="tests/data/encrypted/mdc/rsa/aes/bzip2/big.gpg",
+        passphrase="password25",
+    )
 
     def run(key_location, message_location, passphrase):
         decryptor, message = get_decryptor_and_message(key_location, message_location, passphrase)
-        decrypt_action = lambda : decryptor.decrypt(message)
+        decrypt_action = lambda: decryptor.decrypt(message)
         start_loop(decrypt_action)
 
     if args.number_processes == 0:
@@ -50,4 +54,4 @@ if __name__ == '__main__':
             for process in processes:
                 process.join()
         except KeyboardInterrupt:
-            print('exiting')
+            print("exiting")
