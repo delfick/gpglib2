@@ -20,8 +20,9 @@ setup(
 
     , extras_require =
       { "tests":
-        [ "noseOfYeti"
-        , "nose"
+        [ "noseOfYeti==2.0.2"
+        , "pytest"
+        , "pytest-helpers-namespace==2019.1.8"
         ]
       }
 
