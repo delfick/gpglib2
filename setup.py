@@ -3,13 +3,10 @@ from gpglib import VERSION
 
 # fmt: off
 
-# All the packages except test
-packages = [pkg for pkg in find_packages() if not pkg.startswith('tests')]
-
 setup(
       name = "gpglib2"
     , version = VERSION
-    , packages = packages
+    , packages = find_packages(include="gpglib.*", exclude=["tests*"])
 
     , python_requires = ">= 3.6"
 
@@ -28,7 +25,7 @@ setup(
 
     # metadata for upload to PyPI
     , author = "Stephen Moore"
-    , author_email = "delfick755@gmail.com"
+    , author_email = "stephen@delfick.com"
     , description = "A python3 compatible fork of gpglib, a Library for decrypting gpg that doesn't shell out to gpg"
     , long_description = open("README.rst").read()
     , license = "LGPLv2"
