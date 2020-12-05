@@ -1,0 +1,10 @@
+#!/bin/bash
+
+# Helper for searching code base without searching through external code
+
+DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+
+(
+    cd $DIR
+    exec ack "$@" $DIR/gpglib $DIR/tests
+)
