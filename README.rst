@@ -25,6 +25,7 @@ ChangeLog
 0.4
   * gpglib2 now only supports python3.6 and above
   * Formatting and linting with black and pylama
+  * Upgraded dependencies
 
 0.3.1
   * Update pycryptodome for CVE-2018-15560

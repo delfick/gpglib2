@@ -14,8 +14,8 @@ setup(
     , python_requires = ">= 3.6"
 
     , install_requires =
-      [ 'pycryptodome==3.6.6'
-      , 'bitstring==3.1.5'
+      [ 'pycryptodome==3.9.9'
+      , 'bitstring==3.1.7'
       ]
 
     , extras_require =
