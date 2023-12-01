@@ -22,6 +22,11 @@ original gpglib, so we have created a fork.
 ChangeLog
 ---------
 
+0.5.0 - TBD
+  * Update to hatchling
+  * Now supports python 3.8 to 3.12
+  * Changed to MIT license
+
 0.4.0 - 6 December 2020
   * gpglib2 now only supports python3.6 and above
   * Formatting and linting with black and pylama
@@ -43,9 +48,9 @@ ChangeLog
 Installing
 ==========
 
-To install, just use pip::
+To install, pip::
 
-    $ pip install gpglib2
+    $ python -m pip install gpglib2
 
 Or download from pypi: http://pypi.python.org/pypi/gpglib2.
 
@@ -97,24 +102,22 @@ account.
 Tests
 =====
 
-Install the pip requirements::
+Run::
 
-    $ pip install -e ".[tests]"
-
-And then run::
-
-    $ ./test.sh
+  > ./test.sh
 
 Currently not much is tested.
 
-Note that if you also do a ``pip install tox`` then you may run the tests with
-different python versions by running ``tox``
+You may also use tox::
+
+  > source run.sh activate
+  > tox
 
 Docs
 ====
 
-You can build the docs yourself by going into the docs directory and running
-``./build.sh`` and then run ``python3 -m http.server`` and navigate to
-``localhost:8000/sphinx/_build/html/``
+Run::
+
+  > ./run.sh docs view
 
 Generated documentation is also available at: http://gpglib2.readthedocs.org/en/latest/

@@ -6,4 +6,4 @@
 
 .. _gpglib2:
 
-.. include:: ../../README.rst
+.. include:: ../README.rst

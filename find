@@ -6,5 +6,10 @@ DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 
 (
     cd $DIR
-    exec ack "$@" $DIR/gpglib $DIR/tests
+    exec ack "$@" \
+        --ignore-directory .tox \
+        --ignore-directory .mypy_cache \
+        --ignore-directory dist \
+        --ignore-directory build \
+        --ignore-directory tools \
 )
