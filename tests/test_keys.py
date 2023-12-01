@@ -1,8 +1,8 @@
 # coding: spec
 
-from gpglib.structures import Key
-
 import pytest
+
+from gpglib.structures import Key
 
 describe "Consuming rsa keys":
     it "successfully consumes a secret key":

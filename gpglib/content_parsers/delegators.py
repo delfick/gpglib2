@@ -1,22 +1,20 @@
+from gpglib.content_parsers.base import Parser
 from gpglib.content_parsers.data import (
-    SymmetricallyEncryptedIntegrityProtectedDataPacketParser,
-    ModificationDetectionCodePacketParser,
-)
-from gpglib.content_parsers.keys import (
-    SecretKeyParser,
-    PublicKeyParser,
-    SecretSubKeyParser,
-    PublicSubKeyParser,
-    SignatureParser,
-)
-from gpglib.content_parsers.data import (
-    LiteralParser,
     CompressedParser,
+    LiteralParser,
+    ModificationDetectionCodePacketParser,
     SymEncryptedParser,
+    SymmetricallyEncryptedIntegrityProtectedDataPacketParser,
     UserIdParser,
 )
+from gpglib.content_parsers.keys import (
+    PublicKeyParser,
+    PublicSubKeyParser,
+    SecretKeyParser,
+    SecretSubKeyParser,
+    SignatureParser,
+)
 from gpglib.content_parsers.session_keys import PubSessionKeyParser
-from gpglib.content_parsers.base import Parser
 
 ####################
 ### DELEGATORS

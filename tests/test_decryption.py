@@ -1,9 +1,10 @@
 # coding:spec
 
-from gpglib.structures import EncryptedMessage
-
 import itertools
+
 import pytest
+
+from gpglib.structures import EncryptedMessage
 
 mdc = (True, False)
 msgs = ("small", "big")

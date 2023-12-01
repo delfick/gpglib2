@@ -1,9 +1,8 @@
+import itertools
 import math
 
 from gpglib.content_parsers.crypt import Mapped
 from gpglib.utils import binary_type
-
-import itertools
 
 
 class Parser(object):

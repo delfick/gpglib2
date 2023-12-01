@@ -156,7 +156,7 @@ class PacketParser(Parser):
     def determine_old_body_length(self, length_type, region):
         """Determine body length of an old style packet"""
         if length_type < 3:
-            octet_length = 2 ** length_type
+            octet_length = 2**length_type
             return region.read("uint:%d" % (8 * octet_length))
         else:
             # indeterminate length untill the end of the file

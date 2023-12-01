@@ -1,6 +1,6 @@
-from gpglib.content_parsers.crypt import Mapped, PKCS
-from gpglib.content_parsers.base import Parser
 from gpglib import errors
+from gpglib.content_parsers.base import Parser
+from gpglib.content_parsers.crypt import PKCS, Mapped
 
 
 class PubSessionKeyParser(Parser):

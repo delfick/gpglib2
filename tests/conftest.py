@@ -1,7 +1,8 @@
-from gpglib.structures import Key
+import os
 
 import pytest
-import os
+
+from gpglib.structures import Key
 
 this_folder = os.path.dirname(__file__)
 data_folder = os.path.join(this_folder, "data")

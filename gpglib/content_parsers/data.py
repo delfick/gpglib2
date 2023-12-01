@@ -1,8 +1,8 @@
-from gpglib.content_parsers.crypt import Mapped
-from gpglib.content_parsers.base import Parser
-from gpglib import errors
-
 from Crypto.Hash import SHA
+
+from gpglib import errors
+from gpglib.content_parsers.base import Parser
+from gpglib.content_parsers.crypt import Mapped
 
 
 class CompressedParser(Parser):

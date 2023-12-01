@@ -1,14 +1,14 @@
-from gpglib.utils import bytes_to_long, long_to_bytes
-from gpglib import errors
-
-from Crypto.Cipher import CAST, AES, Blowfish, DES3, PKCS1_v1_5
-from Crypto.PublicKey import RSA, DSA, ElGamal
-from Crypto.Hash import SHA, SHA256
-from Crypto import Random
+import bz2
+import zlib
 
 import bitstring
-import zlib
-import bz2
+from Crypto import Random
+from Crypto.Cipher import AES, CAST, DES3, Blowfish, PKCS1_v1_5
+from Crypto.Hash import SHA, SHA256
+from Crypto.PublicKey import DSA, RSA, ElGamal
+
+from gpglib import errors
+from gpglib.utils import bytes_to_long, long_to_bytes
 
 ####################
 ### CFB

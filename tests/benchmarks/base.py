@@ -1,8 +1,8 @@
 """Helpers for naive benchmark"""
 
-import time
-import sys
 import os
+import sys
+import time
 
 
 def get_decryptor_and_message(key_location, message_location, passphrase):

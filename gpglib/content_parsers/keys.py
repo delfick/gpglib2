@@ -1,10 +1,9 @@
-from gpglib.content_parsers.crypt import Mapped, Mpi, crypt_CFB
-from gpglib.content_parsers.base import Parser
-from gpglib import errors
-
+import bitstring
 from Crypto.Hash import SHA
 
-import bitstring
+from gpglib import errors
+from gpglib.content_parsers.base import Parser
+from gpglib.content_parsers.crypt import Mapped, Mpi, crypt_CFB
 
 ####################
 ### SIGNATURE

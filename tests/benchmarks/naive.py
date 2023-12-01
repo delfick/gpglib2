@@ -4,9 +4,10 @@
     Where the keyword is naive
 """
 
-from base import get_decryptor_and_message, start_loop
-import multiprocessing
 import argparse
+import multiprocessing
+
+from base import get_decryptor_and_message, start_loop
 
 
 def get_parser():
