@@ -22,7 +22,7 @@ original gpglib, so we have created a fork.
 ChangeLog
 ---------
 
-0.5.0 - TBD
+0.5.0 - 2 December 2023
   * Update to hatchling
   * Now supports python 3.8 to 3.12
   * Changed to MIT license
