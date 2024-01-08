@@ -36,6 +36,11 @@ include = [
     "/gpglib",
 ]
 
+[tool.hatch.build.targets.wheel]
+include = [
+    "/gpglib",
+]
+
 [tool.black]
 line-length = 100
 include = '\.py$'
