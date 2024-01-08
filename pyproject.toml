@@ -18,7 +18,7 @@ keywords = [
 ]
 dependencies = [
     "bitstring==4.1.4",
-    "pycryptodome==3.19.0",
+    "pycryptodome==3.19.1",
 ]
 
 [project.optional-dependencies]
